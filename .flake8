@@ -1,0 +1,10 @@
+[flake8]
+exclude = 
+    migrations,
+    __pycache__,
+    .git,
+    config1,
+    .vscode
+    .env
+    venv
+max-complexity = 11
