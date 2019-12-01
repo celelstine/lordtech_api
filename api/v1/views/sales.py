@@ -5,6 +5,7 @@ from django_filters import rest_framework as filters
 
 from api.v1.serializers import (
     ConfigurationSerializer,
+    DataPlanSerializer,
     DataSubscriptionSerializer,
     ProductSerializer,
     SalesRepSerializer,
@@ -12,6 +13,7 @@ from api.v1.serializers import (
 
 from sales.models import (
     Configuration,
+    DataPlan,
     DataSubscription,
     Product,
     SalesRep
@@ -99,3 +101,11 @@ class DataSubscriptionViewSet(viewsets.ModelViewSet):
     serializer_class = DataSubscriptionSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('network',)
+
+
+class DataPlanViewSet(viewsets.ModelViewSet):
+    """manage DataSubscription"""
+    queryset = DataPlan.objects.filter(is_active=True)
+    serializer_class = DataPlanSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('network', 'name')

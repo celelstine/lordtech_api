@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from .models import (
     Configuration,
+    DataPlan,
     DataSubscription,
     Product,
     SalesRep
@@ -42,4 +43,14 @@ class SalesRepAdmin(admin.ModelAdmin):
         'create_date', 'modify_date')
     list_display = fields
     readonly_fields = ('create_date', 'modify_date')
+    search_fields = ['name', 'id']
+
+
+@admin.register(DataPlan)
+class DataPlanAdmin(admin.ModelAdmin):
+    fields = (
+        'id', 'name', 'network', 'mb', 'cost',
+        'create_date', 'modify_date')
+    list_display = fields
+    readonly_fields = ('id', 'create_date', 'modify_date')
     search_fields = ['name', 'id']
