@@ -28,7 +28,9 @@ class AccessTokenBackend(authentication.BaseAuthentication):
 
         try:
             payload = jwt.decode(
-                access_token, settings.SECRET_KEY, algorithms=['HS256'])
+                access_token,
+                settings.SECRET_KEY,
+                algorithms=[settings.JWT_ALGORITHM])
             user_id = payload.get('user_id', None)
             if user_id is None:
                 raise exceptions.AuthenticationFailed(
@@ -41,7 +43,8 @@ class AccessTokenBackend(authentication.BaseAuthentication):
         except User.DoesNotExist:
             raise exceptions.AuthenticationFailed(
                 'Invalid Token, please login/signup')
-        except Exception:
+        except Exception as ex:
+            LOGGER.error('Error with authenticating user', ex)
             raise exceptions.AuthenticationFailed('Unknown error')
 
     def get_user(self, user_id):

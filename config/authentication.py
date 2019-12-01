@@ -18,7 +18,9 @@ class UserViewSetPermission(permissions.BasePermission):
     """permission config for the user route"""
 
     def has_permission(self, request, view):
-        if view.action == 'login':
+        if request.user.is_authenticated and request.user.is_superuser:
+            return True
+        elif view.action in ['login', 'refresh_token']:
             return True
         elif view.action in ['list', 'create']:
             return request.user.is_authenticated and request.user.is_superuser

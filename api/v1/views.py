@@ -11,7 +11,8 @@ from api.v1.view_util import (
     coming_up_soon,
     failed_login
 )
-# from LtSales_auth.models import RefreshToken
+
+from LtSales_auth.models import RefreshToken
 User = get_user_model()
 
 
@@ -98,6 +99,57 @@ class UserViewSet(viewsets.ModelViewSet):
         if hasattr(self, 'refresh_token'):
             user.refresh_token.delete()
         return Response(status=status.HTTP_200_OK)
+
+    @action(methods=['post'], detail=False)
+    def refresh_token(self, request):
+        """
+        get new access token with a refresh token, please do not pass refresh
+        token as an authorization header. Pass it as a header: Refresh-Token
+        """
+        refresh_token_key = request.headers.get('Refresh-Token', None)
+
+        if refresh_token_key is None:
+            return Response("Could not fetch refresh token from request,"
+                            "Please pass token in request header with key: "
+                            "Refresh-Token",
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        # get token and generate refresh token
+        try:
+            refresh_token = RefreshToken.objects.get(key=refresh_token_key)
+            auth = refresh_token.generate_access_token()
+            return Response(auth)
+        except RefreshToken.DoesNotExist:
+            return Response('Invalid refresh token; please login',
+                            status=status.HTTP_400_BAD_REQUEST)
+
+    @action(methods=['post'], detail=False)
+    def reset_password(self, request):
+        """
+        reset a user's password, only accessible to admin
+        """
+        username = request.data.get('username', None)
+
+        if username is None:
+            return Response('Please provide the username that you want to reset',  # noqa
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            u = self.queryset.get(username=username)
+
+            # generate random password
+            password = User.objects.make_random_password()
+            u.set_password(password)
+            u.save()
+
+            response = {
+                'username': username,
+                'password': password,
+            }
+            return Response(response)
+        except User.DoesNotExist:
+            return Response('User with username: %s does not exist' % username,
+                            status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, pk=None, *args, **kwargs):
         return coming_up_soon()
