@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from sales.models import (
     Configuration,
+    DataSubscription,
     Product,
     SalesRep
 )
@@ -25,4 +26,11 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
+        fields = '__all__'
+
+
+class DataSubscriptionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = DataSubscription
         fields = '__all__'

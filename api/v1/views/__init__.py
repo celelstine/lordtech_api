@@ -4,6 +4,7 @@ from .auth import (
 
 from .sales import (
     ConfigurationViewSet,
+    DataSubscriptionViewSet,
     ProductViewSet,
     SalesRepViewSet,
 )
@@ -11,6 +12,7 @@ from .sales import (
 
 __all__ = [
     'ConfigurationViewSet',
+    'DataSubscriptionViewSet',
     'ProductViewSet',
     'SalesRepViewSet',
     'UserViewSet',

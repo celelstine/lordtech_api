@@ -27,3 +27,8 @@ class Configuration(BaseAppModelMixin):
 
     class Meta:
         unique_together = ('category', 'key')
+
+    def __str__(self):
+        """customize the string representation"""
+        return "%s configuration for %s" % (
+            self.get_category_display(), self.key)

@@ -4,13 +4,15 @@ from rest_framework.response import Response
 from django_filters import rest_framework as filters
 
 from api.v1.serializers import (
-    SalesRepSerializer,
     ConfigurationSerializer,
+    DataSubscriptionSerializer,
     ProductSerializer,
+    SalesRepSerializer,
 )
 
 from sales.models import (
     Configuration,
+    DataSubscription,
     Product,
     SalesRep
 )
@@ -89,3 +91,11 @@ class ProductViewSet(viewsets.ModelViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
 
         return super(ProductViewSet, self).create(request)
+
+
+class DataSubscriptionViewSet(viewsets.ModelViewSet):
+    """manage DataSubscription"""
+    queryset = DataSubscription.objects.filter(is_active=True)
+    serializer_class = DataSubscriptionSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('network',)

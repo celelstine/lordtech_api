@@ -26,4 +26,10 @@ class SalesRep(BaseAppModelMixin):
     airtime_balance = models.IntegerField(default=0)
 
     class Meta:
+        verbose_name = 'Sales Rep'
+        verbose_name_plural = 'Sales Reps'
         unique_together = ('category', 'name')
+
+    def __str__(self):
+        """customize the string representation"""
+        return "%s (department %s)" % (self.get_category_display(), self.name)

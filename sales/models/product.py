@@ -25,3 +25,7 @@ class Product(BaseAppModelMixin):
 
     class Meta:
         unique_together = ('category', 'name')
+
+    def __str__(self):
+        """customize the string representation"""
+        return "%s (category %s)" % (self.get_category_display(), self.name)
