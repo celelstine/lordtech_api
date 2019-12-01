@@ -159,7 +159,7 @@ REST_FRAMEWORK = {
          'django_filters.rest_framework.DjangoFilterBackend',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',  # noqa
-    'PAGE_SIZE': 1
+    'PAGE_SIZE': 20
 }
 
 JWT_EXP_DELTA_DAYS = 20

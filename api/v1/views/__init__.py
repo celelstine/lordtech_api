@@ -3,13 +3,15 @@ from .auth import (
 )
 
 from .sales import (
+    ConfigurationViewSet,
+    ProductViewSet,
     SalesRepViewSet,
-    ConfigurationViewSet
 )
 
 
 __all__ = [
-    'UserViewSet',
-    'SalesRepViewSet',
     'ConfigurationViewSet',
+    'ProductViewSet',
+    'SalesRepViewSet',
+    'UserViewSet',
 ]

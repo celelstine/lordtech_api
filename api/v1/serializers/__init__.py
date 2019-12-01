@@ -3,13 +3,15 @@ from .auth import (
 )
 
 from .sales import (
-    SalesRepSerializer,
     ConfigurationSerializer,
+    ProductSerializer,
+    SalesRepSerializer,
 )
 
 
 __all__ = [
     'UserSerializer',
     'SalesRepSerializer',
-    'ConfigurationSerializer'
+    'ConfigurationSerializer',
+    'ProductSerializer',
 ]
