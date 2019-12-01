@@ -8,12 +8,10 @@ class SalesRep(BaseAppModelMixin):
 
     DATA = 'da'
     GIFTCARD = 'gc'
-    ALL = 'all'
 
     CATEGORY_CHOICES = [
         (DATA, 'Data'),
         (GIFTCARD, 'GIFTCARD'),
-        (ALL, 'all'),
     ]
 
     name = models.CharField(max_length=50, blank=False, null=False)
@@ -22,7 +20,6 @@ class SalesRep(BaseAppModelMixin):
         choices=CATEGORY_CHOICES,
         blank=False,
         null=False,
-        default=ALL
     )
     is_active = models.BooleanField(default=True)
     cash_balance = models.IntegerField(default=0)

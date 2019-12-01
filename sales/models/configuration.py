@@ -12,8 +12,7 @@ class Configuration(BaseAppModelMixin):
 
     CATEGORY_CHOICES = [
         (DATA, 'Data'),
-        (GIFTCARD, 'GIFTCARD'),
-        (ALL, 'all'),
+        (GIFTCARD, 'GIFTCARD')
     ]
 
     key = models.CharField(max_length=50, blank=False, null=False)
@@ -23,7 +22,6 @@ class Configuration(BaseAppModelMixin):
         choices=CATEGORY_CHOICES,
         blank=False,
         null=False,
-        default=ALL
     )
     is_active = models.BooleanField(default=True)
 
