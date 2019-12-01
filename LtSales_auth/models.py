@@ -51,10 +51,11 @@ class RefreshToken(BaseAppModelMixin):
         self.save()
 
         # create new access token
-        expired_at = datetime.utcnow() + timedelta(days=1)
+        expired_at = datetime.utcnow() + timedelta(
+            days=settings.JWT_EXP_DELTA_DAYS)
         access_token = jwt.encode(
             {'exp': expired_at, 'user_id': str(self.user_id)},
-            settings.SECRET_KEY, algorithm='HS256'
+            settings.SECRET_KEY, algorithm=settings.JWT_ALGORITHM
         )
 
         result = {

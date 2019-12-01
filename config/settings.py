@@ -26,7 +26,7 @@ load_dotenv(dotenv_path=os.path.join(BASE_DIR, '.env'))
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', '30fbfa29-c7c6-48fb-8d66-79280d8cbf27')
+SECRET_KEY = os.getenv('SECRET_KEY', 'badguy')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', True)
@@ -158,3 +158,6 @@ REST_FRAMEWORK = {
          'django_filters.rest_framework.DjangoFilterBackend',
     ),
 }
+
+JWT_EXP_DELTA_DAYS = 1
+JWT_ALGORITHM = 'HS256'
