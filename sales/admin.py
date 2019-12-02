@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .models import (
+    AirtimeRecieved,
     Configuration,
     DataPlan,
     DataSubscription,
@@ -60,12 +61,26 @@ class DataPlanAdmin(admin.ModelAdmin):
 @admin.register(SalesRepDataSubscription)
 class SalesRepDataSubscriptionAdmin(admin.ModelAdmin):
     fields = (
-        'id', 'sub', 'sales_rep', 'amount', 'cost',
+        'id', 'sub', 'sales_rep', 'amount', 'cost', 'is_closed',
         'create_date', 'modify_date')
     list_display = fields
     readonly_fields = ('id', 'create_date', 'modify_date')
-    search_fields = ['id']
+    search_fields = ['id', 'is_closed']
 
     def get_queryset(self, request):
         return super(SalesRepDataSubscriptionAdmin, self).get_queryset(
+            request).order_by('-create_date')
+
+
+@admin.register(AirtimeRecieved)
+class AirtimeRecievedAdmin(admin.ModelAdmin):
+    fields = (
+        'id', 'sales_rep', 'amount', 'is_closed',
+        'create_date', 'modify_date')
+    list_display = fields
+    readonly_fields = ('id', 'create_date', 'modify_date')
+    search_fields = ['id', 'amount', 'is_closed']
+
+    def get_queryset(self, request):
+        return super(AirtimeRecievedAdmin, self).get_queryset(
             request).order_by('-create_date')

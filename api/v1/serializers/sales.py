@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from sales.models import (
+    AirtimeRecieved,
     Configuration,
     DataPlan,
     DataSubscription,
@@ -49,4 +50,11 @@ class SalesRepDataSubscriptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SalesRepDataSubscription
+        fields = '__all__'
+
+
+class AirtimeRecievedSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AirtimeRecieved
         fields = '__all__'

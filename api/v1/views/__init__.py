@@ -3,6 +3,7 @@ from .auth import (
 )
 
 from .sales import (
+    AirtimeRecievedViewSet,
     ConfigurationViewSet,
     DataPlanViewSet,
     DataSubscriptionViewSet,
@@ -13,6 +14,7 @@ from .sales import (
 
 
 __all__ = [
+    'AirtimeRecievedViewSet',
     'ConfigurationViewSet',
     'DataPlanViewSet',
     'DataSubscriptionViewSet',

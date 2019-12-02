@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from django_filters import rest_framework as filters
 
 from api.v1.serializers import (
+    AirtimeRecievedSerializer,
     ConfigurationSerializer,
     DataPlanSerializer,
     DataSubscriptionSerializer,
@@ -13,6 +14,7 @@ from api.v1.serializers import (
 )
 
 from sales.models import (
+    AirtimeRecieved,
     Configuration,
     DataPlan,
     DataSubscription,
@@ -142,14 +144,17 @@ class SalesRepDataSubscriptionViewSet(viewsets.ModelViewSet):
         return super(SalesRepDataSubscriptionViewSet, self).update(
             request, pk=pk)
 
-    def partial_update(self, request, pk=None):
+    def partial_update(self, request, *args, **Kwargs):
+        pk = Kwargs['pk']
         is_closed = is_closed_record(SalesRepDataSubscription, pk)
 
         if is_closed is not False:
             return is_closed
 
-        return super(SalesRepDataSubscriptionViewSet, self).partial_update(
-            request, pk=pk)
+        # call update but with partial
+        Kwargs['partial'] = True
+        return super(SalesRepDataSubscriptionViewSet, self).update(
+            request,  *args, **Kwargs)
 
     def destroy(self, request, pk=None):
         is_closed = is_closed_record(SalesRepDataSubscription, pk, 'delete')
@@ -159,3 +164,39 @@ class SalesRepDataSubscriptionViewSet(viewsets.ModelViewSet):
 
         return super(SalesRepDataSubscriptionViewSet, self).destroy(
             request, pk=pk)
+
+
+class AirtimeRecievedViewSet(viewsets.ModelViewSet):
+    """manage sales rep DataSubscription"""
+    queryset = AirtimeRecieved.objects.order_by('id')
+    serializer_class = AirtimeRecievedSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('sales_rep', 'amount', 'create_date', 'is_closed')
+
+    def update(self, request, pk=None):
+        is_closed = is_closed_record(AirtimeRecieved, pk)
+
+        if is_closed is not False:
+            return is_closed
+
+        return super(AirtimeRecievedViewSet, self).update(request, pk=pk)
+
+    def partial_update(self, request, *args, **Kwargs):
+        pk = Kwargs['pk']
+        is_closed = is_closed_record(AirtimeRecieved, pk)
+
+        if is_closed is not False:
+            return is_closed
+
+        # call update but with partial
+        Kwargs['partial'] = True
+        return super(AirtimeRecievedViewSet, self).update(
+            request,  *args, **Kwargs)
+
+    def destroy(self, request, pk=None):
+        is_closed = is_closed_record(AirtimeRecieved, pk, 'delete')
+
+        if is_closed is not False:
+            return is_closed
+
+        return super(AirtimeRecievedViewSet, self).destroy(request, pk=pk)
