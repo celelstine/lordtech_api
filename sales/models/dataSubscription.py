@@ -11,7 +11,8 @@ class DataSubscription(BaseAppModelMixin):
 
     network = models.OneToOneField(
         Product,
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE,
+        limit_choices_to={'category': Product.DATA})
     mb_per_sub = models.PositiveIntegerField(null=False, blank=False)
     cost_per_sub = models.PositiveIntegerField(null=False, blank=False)
     is_active = models.BooleanField(default=True)

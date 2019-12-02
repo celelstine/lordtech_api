@@ -6,6 +6,7 @@ from api.v1.views import (
     DataSubscriptionViewSet,
     ProductViewSet,
     SalesRepViewSet,
+    SalesRepDataSubscriptionViewSet,
     UserViewSet,
 )
 
@@ -16,5 +17,7 @@ router.register(r'user', UserViewSet, base_name='user')
 router.register(r'config', ConfigurationViewSet, base_name='config')
 router.register(r'dataplan', DataPlanViewSet, base_name='dataplan')
 router.register(r'sub', DataSubscriptionViewSet, base_name='sub')
+router.register(
+    r'salesrep-sub', SalesRepDataSubscriptionViewSet, base_name='salesrep-sub')
 router.register(r'product', ProductViewSet, base_name='product')
 urlpatterns = router.urls

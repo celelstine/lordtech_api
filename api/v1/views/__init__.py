@@ -8,6 +8,7 @@ from .sales import (
     DataSubscriptionViewSet,
     ProductViewSet,
     SalesRepViewSet,
+    SalesRepDataSubscriptionViewSet,
 )
 
 
@@ -17,5 +18,6 @@ __all__ = [
     'DataSubscriptionViewSet',
     'ProductViewSet',
     'SalesRepViewSet',
+    'SalesRepDataSubscriptionViewSet',
     'UserViewSet',
 ]

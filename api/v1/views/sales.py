@@ -9,6 +9,7 @@ from api.v1.serializers import (
     DataSubscriptionSerializer,
     ProductSerializer,
     SalesRepSerializer,
+    SalesRepDataSubscriptionSerializer,
 )
 
 from sales.models import (
@@ -16,13 +17,14 @@ from sales.models import (
     DataPlan,
     DataSubscription,
     Product,
-    SalesRep
+    SalesRep,
+    SalesRepDataSubscription
 )
 
 
 class ConfigurationViewSet(viewsets.ModelViewSet):
     """Manage configurations"""
-    queryset = Configuration.objects.filter(is_active=True)
+    queryset = Configuration.objects.filter(is_active=True).order_by('id')
     serializer_class = ConfigurationSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('category', 'key')
@@ -47,7 +49,7 @@ class ConfigurationViewSet(viewsets.ModelViewSet):
 
 class SalesRepViewSet(viewsets.ModelViewSet):
     """manage sales representatives"""
-    queryset = SalesRep.objects.filter(is_active=True)
+    queryset = SalesRep.objects.filter(is_active=True).order_by('id')
     serializer_class = SalesRepSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('name', 'category')
@@ -72,7 +74,7 @@ class SalesRepViewSet(viewsets.ModelViewSet):
 
 class ProductViewSet(viewsets.ModelViewSet):
     """manage product"""
-    queryset = Product.objects.filter(is_active=True)
+    queryset = Product.objects.filter(is_active=True).order_by('id')
     serializer_class = ProductSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('name', 'category')
@@ -97,15 +99,24 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 class DataSubscriptionViewSet(viewsets.ModelViewSet):
     """manage DataSubscription"""
-    queryset = DataSubscription.objects.filter(is_active=True)
+    queryset = DataSubscription.objects.filter(is_active=True).order_by('id')
     serializer_class = DataSubscriptionSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('network',)
 
 
 class DataPlanViewSet(viewsets.ModelViewSet):
-    """manage DataSubscription"""
-    queryset = DataPlan.objects.filter(is_active=True)
+    """manage Dataplan"""
+    queryset = DataPlan.objects.filter(is_active=True).order_by('id')
     serializer_class = DataPlanSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('network', 'name')
+
+
+class SalesRepDataSubscriptionViewSet(viewsets.ModelViewSet):
+    """manage sales rep DataSubscription"""
+    queryset = SalesRepDataSubscription.objects.filter(
+        is_active=True).order_by('id')
+    serializer_class = SalesRepDataSubscriptionSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('sub', 'sales_rep', 'create_date')

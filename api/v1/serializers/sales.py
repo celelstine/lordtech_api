@@ -5,7 +5,8 @@ from sales.models import (
     DataPlan,
     DataSubscription,
     Product,
-    SalesRep
+    SalesRep,
+    SalesRepDataSubscription,
 )
 
 
@@ -41,4 +42,11 @@ class DataPlanSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DataPlan
+        fields = '__all__'
+
+
+class SalesRepDataSubscriptionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = SalesRepDataSubscription
         fields = '__all__'

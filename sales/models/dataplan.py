@@ -9,7 +9,10 @@ from sales.models import Product
 class DataPlan(BaseAppModelMixin):
     """class for data plan"""
 
-    network = models.ForeignKey(Product, on_delete=models.CASCADE)
+    network = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        limit_choices_to={'category': Product.DATA})
     name = models.CharField(max_length=50, blank=False, null=False)
     mb = models.PositiveIntegerField(null=False, blank=False)
     cost = models.PositiveIntegerField(null=False, blank=False)

@@ -3,6 +3,7 @@ from .configuration import Configuration
 from .product import Product
 from .dataSubscription import DataSubscription
 from .dataplan import DataPlan
+from .salesrepDataSubscription import SalesRepDataSubscription
 
 __all__ = [
     'Product',
@@ -10,4 +11,5 @@ __all__ = [
     'Configuration',
     'DataSubscription',
     'DataPlan',
+    'SalesRepDataSubscription'
 ]

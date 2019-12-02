@@ -5,7 +5,8 @@ from .models import (
     DataPlan,
     DataSubscription,
     Product,
-    SalesRep
+    SalesRep,
+    SalesRepDataSubscription,
 )
 
 
@@ -54,3 +55,17 @@ class DataPlanAdmin(admin.ModelAdmin):
     list_display = fields
     readonly_fields = ('id', 'create_date', 'modify_date')
     search_fields = ['name', 'id']
+
+
+@admin.register(SalesRepDataSubscription)
+class SalesRepDataSubscriptionAdmin(admin.ModelAdmin):
+    fields = (
+        'id', 'sub', 'sales_rep', 'amount', 'cost',
+        'create_date', 'modify_date')
+    list_display = fields
+    readonly_fields = ('id', 'create_date', 'modify_date')
+    search_fields = ['id']
+
+    def get_queryset(self, request):
+        return super(SalesRepDataSubscriptionAdmin, self).get_queryset(
+            request).order_by('-create_date')
