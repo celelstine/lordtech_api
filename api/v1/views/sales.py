@@ -113,10 +113,49 @@ class DataPlanViewSet(viewsets.ModelViewSet):
     filter_fields = ('network', 'name')
 
 
+def is_closed_record(model, pk, action='update'):
+    try:
+        obj = model.objects.get(pk=pk)
+        if obj.is_closed is True:
+            return Response('Can not %s a closed record' % action,
+                            status=status.HTTP_400_BAD_REQUEST)
+    except model.DoesNotExist:
+        return Response('Record was not found',
+                        status=status.HTTP_404_NOT_FOUND)
+
+    return False
+
+
 class SalesRepDataSubscriptionViewSet(viewsets.ModelViewSet):
     """manage sales rep DataSubscription"""
-    queryset = SalesRepDataSubscription.objects.filter(
-        is_active=True).order_by('id')
+    queryset = SalesRepDataSubscription.objects.order_by('id')
     serializer_class = SalesRepDataSubscriptionSerializer
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('sub', 'sales_rep', 'create_date')
+    filter_fields = ('sub', 'sales_rep', 'create_date', 'is_closed')
+
+    def update(self, request, pk=None):
+        is_closed = is_closed_record(SalesRepDataSubscription, pk)
+
+        if is_closed is not False:
+            return is_closed
+
+        return super(SalesRepDataSubscriptionViewSet, self).update(
+            request, pk=pk)
+
+    def partial_update(self, request, pk=None):
+        is_closed = is_closed_record(SalesRepDataSubscription, pk)
+
+        if is_closed is not False:
+            return is_closed
+
+        return super(SalesRepDataSubscriptionViewSet, self).partial_update(
+            request, pk=pk)
+
+    def destroy(self, request, pk=None):
+        is_closed = is_closed_record(SalesRepDataSubscription, pk, 'delete')
+
+        if is_closed is not False:
+            return is_closed
+
+        return super(SalesRepDataSubscriptionViewSet, self).destroy(
+            request, pk=pk)

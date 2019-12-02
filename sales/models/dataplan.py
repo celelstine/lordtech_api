@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 
 from utils.model_mixins import BaseAppModelMixin
 
-from sales.models import Product
+from .product import Product
 
 
 class DataPlan(BaseAppModelMixin):
