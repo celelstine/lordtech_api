@@ -18,7 +18,8 @@ class DataSales(BaseAppModelMixin):
     sales_rep = models.ForeignKey(
         SalesRep,
         on_delete=models.CASCADE,
-        limit_choices_to={'category': SalesRep.DATA},)
+        limit_choices_to={'category': SalesRep.DATA},
+        related_name='sales')
     amount = models.PositiveIntegerField(null=False, blank=False)
     cost = models.PositiveIntegerField(null=True, blank=True)
     total_mb = models.PositiveIntegerField(null=True, blank=True)

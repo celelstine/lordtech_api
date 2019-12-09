@@ -5,6 +5,7 @@ from .models import (
     Configuration,
     DataPlan,
     DataSales,
+    DataSalesSummary,
     DataSubscription,
     Product,
     SalesRep,
@@ -99,3 +100,21 @@ class DataSalesAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return super(DataSalesAdmin, self).get_queryset(
             request).order_by('-create_date')
+
+
+@admin.register(DataSalesSummary)
+class DataSalesSummaryAdmin(admin.ModelAdmin):
+    fields = (
+        'id', 'sales_date', 'sales_rep', 'Start_airtime', 'Start_data',
+        'total_airtime_recieved', 'total_direct_Sales', 'total_sub_made',
+        'expected_airtime', 'actual_airtime', 'expected_data_balance',
+        'actual_data_balance', 'total_data_shared', 'no_order_treated',
+        'outstanding', 'is_closed', 'create_date', 'modify_date')
+    list_display = fields
+    readonly_fields = fields
+    search_fields = [
+        'id', 'sales_date', 'is_closed', 'outstanding', 'no_order_treated']
+
+    def get_queryset(self, request):
+        return super(DataSalesSummaryAdmin, self).get_queryset(
+            request).order_by('-sales_date')

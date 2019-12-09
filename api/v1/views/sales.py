@@ -1,5 +1,10 @@
+from django.db.models import Sum
+from django.utils.timezone import now
+from django.db import transaction
+
 from rest_framework import status
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters import rest_framework as filters
 
@@ -8,6 +13,7 @@ from api.v1.serializers import (
     ConfigurationSerializer,
     DataPlanSerializer,
     DataSalesSerializer,
+    DataSalesSummarySerializer,
     DataSubscriptionSerializer,
     ProductSerializer,
     SalesRepSerializer,
@@ -19,6 +25,7 @@ from sales.models import (
     Configuration,
     DataPlan,
     DataSales,
+    DataSalesSummary,
     DataSubscription,
     Product,
     SalesRep,
@@ -239,3 +246,127 @@ class DataSalesViewSet(viewsets.ModelViewSet):
             return is_closed
 
         return super(DataSalesViewSet, self).destroy(request, pk=pk)
+
+
+class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Viewset to read and create (no update or delete) data sales summary
+    """
+    queryset = DataSalesSummary.objects.order_by('-create_date')
+    serializer_class = DataSalesSummarySerializer
+
+    @action(methods=['post'], detail=False)
+    def create_summary(self, request, pk=None):
+        """
+        Close sales for a particular shift and create a summary of the sales
+        """
+
+        sales_rep_id = request.data.get('sales_rep', None)
+        actual_airtime = request.data.get('actual_airtime', None)
+        actual_data_balance = request.data.get('actual_data_balance', None)
+        no_order_treated = request.data.get('no_order_treated', None)
+        sales_date = request.data.get('sales_date', now())
+        create = request.data.get('create', False)
+
+        if sales_rep_id is None or actual_airtime is None or actual_data_balance is None or no_order_treated is None:  # noqa
+            return Response("Please specfic values for: sales rep,"
+                            " actual_airtime, actual_data_balance "
+                            "and no_order_treated",
+                            status=status.HTTP_400_BAD_REQUEST)
+        # get the sales rep and ensure that she is a data sales rep
+        try:
+            sales_rep = SalesRep.objects.get(pk=sales_rep_id)
+
+            if sales_rep.category != SalesRep.DATA:
+                return Response("Invalid Sales Rep, should be  a data sales rep",  # noqa
+                                status=status.HTTP_400_BAD_REQUEST)
+        except SalesRep.DoesNotExist:
+            return Response("Sales rep does not exist.",
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        start_data = 0.0
+        start_airtime = 0.0
+        # get existing data summary if exist
+        prev_summary = DataSalesSummary.objects.values(
+            'expected_data_balance', 'expected_airtime').last()
+
+        if prev_summary is not None:
+            start_data = prev_summary.get('expected_data_balance')
+            start_airtime = prev_summary.get('expected_airtime')
+
+        # calculate total airime received; that airtime recieved that are not closed   # noqa
+        total_airtime_recieved = sales_rep.airtime_received.filter(
+            is_closed=False).aggregate(Sum('amount'))['amount__sum'] or 0
+
+        sales = sales_rep.sales.filter(is_closed=False)
+        total_direct_sales = 0
+        total_data_shared = 0
+        income = 0
+        
+        for s in sales:
+            if s.is_direct_sales is True:
+                total_direct_sales += s.cost
+            total_data_shared += s.total_mb
+            income += s.cost
+            
+        # calculate total subscription made
+        total_sub = sales_rep.subscriptions.filter(
+            is_closed=False).aggregate(Sum('amount'))['amount__sum'] or 0
+
+        total_airtime_used = 0
+        total_mb_added = 0
+
+        product = sales_rep.sales.last().data_plan.network
+
+        # get total airtime used for subscription and data gained
+        # if total_sub > 0:
+        # the assumption is that a sales rep would hold only one product per shift  # noqa
+        data_sub = product.datasubscription
+        total_airtime_used = total_sub * data_sub.cost_per_sub
+        total_mb_added = total_sub * data_sub.mb_per_sub
+
+        expected_airtime = start_airtime + total_airtime_recieved - total_airtime_used  # noqa
+        outstanding = actual_airtime - expected_airtime - total_direct_sales
+
+        expected_data_balance = start_data + total_mb_added - total_data_shared
+        outstanding_data_balance = actual_data_balance - expected_data_balance
+
+        outstanding_data_cash = (data_sub.cost_per_sub * outstanding_data_balance) / data_sub.mb_per_sub  # noqa
+        outstanding += outstanding_data_cash
+
+        expenditure = (data_sub.cost_per_sub * total_data_shared) / data_sub.mb_per_sub   # noqa
+
+        # profit = income - expenditure
+
+        summary = {
+            'sales_date': sales_date,
+            'sales_rep_id': sales_rep_id,
+            'Start_airtime': start_airtime,
+            'Start_data': start_data,
+            'total_airtime_recieved': total_airtime_recieved,
+            'total_direct_Sales': total_direct_sales,
+            'total_sub_made': total_sub,
+            'expected_airtime': expected_airtime,
+            'actual_airtime': actual_airtime,
+            'expected_data_balance': expected_data_balance,
+            'actual_data_balance': actual_data_balance,
+            'total_data_shared': total_data_shared,
+            'no_order_treated': no_order_treated,
+            'outstanding': outstanding,
+            'is_closed': True
+        }
+
+        if create is False:
+            return Response(summary)
+
+        # close shift records
+        with transaction.atomic():
+            # close records
+            sales_rep.airtime_received.filter(is_closed=False).update(is_closed=True)  # noqa
+            sales_rep.sales.filter(is_closed=False).update(is_closed=True)
+            sales_rep.subscriptions.filter(is_closed=False).update(is_closed=True)  # noqa
+            # TODO: create profit
+            sales_summary = DataSalesSummary.objects.create(**summary)
+
+            data = self.get_serializer_class()(sales_summary).data
+            return Response(data, status=status.HTTP_201_CREATED)
