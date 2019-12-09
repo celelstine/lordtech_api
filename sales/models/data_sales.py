@@ -3,17 +3,26 @@ from django.core.exceptions import ValidationError
 
 from utils.model_mixins import BaseAppModelMixin
 
+from .dataplan import DataPlan
 from .salesrep import SalesRep
 
 
-class AirtimeRecieved(BaseAppModelMixin):
-    """class for airtime recieved by sales rep"""
+class DataSales(BaseAppModelMixin):
+    """class for data sales"""
 
+    data_plan = models.ForeignKey(
+        DataPlan,
+        on_delete=models.CASCADE,
+        related_name='sales'
+        )
     sales_rep = models.ForeignKey(
         SalesRep,
         on_delete=models.CASCADE,
         limit_choices_to={'category': SalesRep.DATA},)
     amount = models.PositiveIntegerField(null=False, blank=False)
+    cost = models.PositiveIntegerField(null=True, blank=True)
+    total_mb = models.PositiveIntegerField(null=True, blank=True)
+    is_direct_sales = models.BooleanField(default=False)
     is_closed = models.BooleanField(default=False)
 
     def clean(self):
@@ -23,8 +32,8 @@ class AirtimeRecieved(BaseAppModelMixin):
                 'Invalid sales rep, only data sales reps are allowed')
 
         # should not allow update when a record has been closed
-        if self.create_date is not None:
-            obj = AirtimeRecieved.objects.values('is_closed').get(
+        if self.create_date:
+            obj = DataSales.objects.values('is_closed').get(
                 pk=self.pk)
             if obj['is_closed'] is True:
                 raise ValidationError('Can update a closed record')
@@ -32,12 +41,16 @@ class AirtimeRecieved(BaseAppModelMixin):
     def save(self, *args, **kwargs):
         # ensure that the clean method is call on every save
         self.clean()
-        super(AirtimeRecieved, self).save(*args, **kwargs)
+        # auto calculate cost
+        self.cost = self.amount * self.data_plan.cost
+        self.total_mb = self.amount * self.data_plan.mb
+        super(DataSales, self).save(*args, **kwargs)
 
     def __str__(self):
         """customize the string representation"""
-        return "%s -  %s" % (self.amount, self.sales_rep)
+        return "%d of  %s sold by %s" % (
+            self.amount, self.data_plan, self.sales_rep)
 
     class Meta:
-        verbose_name = 'Airtime Recieved'
-        verbose_name_plural = 'Airtime Recieved'
+        verbose_name = 'Data Sales'
+        verbose_name_plural = 'Data Sales'

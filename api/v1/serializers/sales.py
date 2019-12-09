@@ -4,6 +4,7 @@ from sales.models import (
     AirtimeRecieved,
     Configuration,
     DataPlan,
+    DataSales,
     DataSubscription,
     Product,
     SalesRep,
@@ -57,4 +58,11 @@ class AirtimeRecievedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AirtimeRecieved
+        fields = '__all__'
+
+
+class DataSalesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = DataSales
         fields = '__all__'

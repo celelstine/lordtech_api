@@ -22,13 +22,13 @@ class SalesRepDataSubscription(BaseAppModelMixin):
     is_closed = models.BooleanField(default=False)
 
     def clean(self):
-        # ensure that the data sub for recroded for only data sales reps
+        # ensure that the data sub for recorded for only data sales reps
         if self.sales_rep.category != SalesRep.DATA:
             raise ValidationError(
                 'Invalid sales rep, only data sales reps are allowed')
 
         # should not allow update when a record has been closed
-        if self.pk:
+        if self.create_date:
             obj = SalesRepDataSubscription.objects.values('is_closed').get(
                 pk=self.pk)
             if obj['is_closed'] is True:

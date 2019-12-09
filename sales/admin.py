@@ -4,6 +4,7 @@ from .models import (
     AirtimeRecieved,
     Configuration,
     DataPlan,
+    DataSales,
     DataSubscription,
     Product,
     SalesRep,
@@ -83,4 +84,18 @@ class AirtimeRecievedAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         return super(AirtimeRecievedAdmin, self).get_queryset(
+            request).order_by('-create_date')
+
+
+@admin.register(DataSales)
+class DataSalesAdmin(admin.ModelAdmin):
+    fields = (
+        'id', 'data_plan', 'sales_rep', 'amount', 'cost', 'total_mb',
+        'is_direct_sales', 'is_closed', 'create_date', 'modify_date')
+    list_display = fields
+    readonly_fields = ('id', 'create_date', 'modify_date', 'cost', 'total_mb')
+    search_fields = ['id', 'amount', 'is_closed', 'cost']
+
+    def get_queryset(self, request):
+        return super(DataSalesAdmin, self).get_queryset(
             request).order_by('-create_date')
