@@ -10,6 +10,7 @@ from django_filters import rest_framework as filters
 
 from api.v1.serializers import (
     AirtimeRecievedSerializer,
+    CashRecievedSerializer,
     ConfigurationSerializer,
     DataPlanSerializer,
     DataSalesSerializer,
@@ -22,6 +23,7 @@ from api.v1.serializers import (
 
 from sales.models import (
     AirtimeRecieved,
+    CashRecieved,
     Configuration,
     DataPlan,
     DataSales,
@@ -366,3 +368,39 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
 
             data = self.get_serializer_class()(sales_summary).data
             return Response(data, status=status.HTTP_201_CREATED)
+
+
+class CashRecievedViewSet(viewsets.ModelViewSet):
+    """manage sales rep DataSubscription"""
+    queryset = CashRecieved.objects.order_by('id')
+    serializer_class = CashRecievedSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('sales_rep', 'amount', 'create_date', 'is_closed')
+
+    def update(self, request, pk=None):
+        is_closed = is_closed_record(AirtimeRecieved, pk)
+
+        if is_closed is not False:
+            return is_closed
+
+        return super(AirtimeRecievedViewSet, self).update(request, pk=pk)
+
+    def partial_update(self, request, *args, **Kwargs):
+        pk = Kwargs['pk']
+        is_closed = is_closed_record(AirtimeRecieved, pk)
+
+        if is_closed is not False:
+            return is_closed
+
+        # call update but with partial
+        Kwargs['partial'] = True
+        return super(AirtimeRecievedViewSet, self).update(
+            request,  *args, **Kwargs)
+
+    def destroy(self, request, pk=None):
+        is_closed = is_closed_record(AirtimeRecieved, pk, 'delete')
+
+        if is_closed is not False:
+            return is_closed
+
+        return super(AirtimeRecievedViewSet, self).destroy(request, pk=pk)

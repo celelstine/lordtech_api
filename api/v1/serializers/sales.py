@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from sales.models import (
     AirtimeRecieved,
+    CashRecieved,
     Configuration,
     DataPlan,
     DataSales,
@@ -73,4 +74,11 @@ class DataSalesSummarySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DataSalesSummary
+        fields = '__all__'
+
+
+class CashRecievedSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CashRecieved
         fields = '__all__'

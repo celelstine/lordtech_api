@@ -4,6 +4,7 @@ from .auth import (
 
 from .sales import (
     AirtimeRecievedSerializer,
+    CashRecievedSerializer,
     ConfigurationSerializer,
     DataPlanSerializer,
     DataSalesSerializer,
@@ -17,6 +18,7 @@ from .sales import (
 
 __all__ = [
     'AirtimeRecievedSerializer',
+    'CashRecievedSerializer',
     'ConfigurationSerializer',
     'DataPlanSerializer',
     'DataSalesSerializer',

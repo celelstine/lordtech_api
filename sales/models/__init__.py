@@ -1,5 +1,6 @@
 
 from .airtime_recieved import AirtimeRecieved
+from .cash_recieved import CashRecieved
 from .configuration import Configuration
 from .dataplan import DataPlan
 from .data_sales import DataSales
@@ -11,6 +12,7 @@ from .salesrep_data_subscription import SalesRepDataSubscription
 
 __all__ = [
     'AirtimeRecieved',
+    'CashRecieved',
     'Configuration',
     'DataPlan',
     'DataSales',

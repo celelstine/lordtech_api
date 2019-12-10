@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from .models import (
     AirtimeRecieved,
+    CashRecieved,
     Configuration,
     DataPlan,
     DataSales,
@@ -17,7 +18,7 @@ from .models import (
 class ConfigurationAdmin(admin.ModelAdmin):
     fields = ('id', 'key', 'value', 'category', 'create_date', 'modify_date')
     list_display = fields
-    readonly_fields = ('create_date', 'modify_date')
+    readonly_fields = ('id', 'create_date', 'modify_date')
     search_fields = ['key', 'id']
 
 
@@ -27,7 +28,7 @@ class DataSubscriptionAdmin(admin.ModelAdmin):
         'id', 'network', 'mb_per_sub', 'cost_per_sub',
         'create_date', 'modify_date')
     list_display = fields
-    readonly_fields = ('create_date', 'modify_date')
+    readonly_fields = ('id', 'create_date', 'modify_date')
     search_fields = ['network', 'id']
 
 
@@ -36,7 +37,7 @@ class ProductAdmin(admin.ModelAdmin):
     fields = (
         'id', 'name', 'category', 'create_date', 'modify_date')
     list_display = fields
-    readonly_fields = ('create_date', 'modify_date')
+    readonly_fields = ('id', 'create_date', 'modify_date')
     search_fields = ['name', 'id']
 
 
@@ -46,7 +47,7 @@ class SalesRepAdmin(admin.ModelAdmin):
         'id', 'name', 'category', 'cash_balance', 'airtime_balance',
         'create_date', 'modify_date')
     list_display = fields
-    readonly_fields = ('create_date', 'modify_date')
+    readonly_fields = ('id', 'create_date', 'modify_date')
     search_fields = ['name', 'id']
 
 
@@ -118,3 +119,17 @@ class DataSalesSummaryAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return super(DataSalesSummaryAdmin, self).get_queryset(
             request).order_by('-sales_date')
+
+
+@admin.register(CashRecieved)
+class CashRecievedAdmin(admin.ModelAdmin):
+    fields = (
+        'id', 'sales_rep', 'amount', 'is_closed',
+        'create_date', 'modify_date')
+    list_display = fields
+    readonly_fields = ('id', 'create_date', 'modify_date')
+    search_fields = ['id', 'amount', 'is_closed']
+
+    def get_queryset(self, request):
+        return super(CashRecievedAdmin, self).get_queryset(
+            request).order_by('-create_date')
