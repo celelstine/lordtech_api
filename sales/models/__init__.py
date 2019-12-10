@@ -9,6 +9,7 @@ from .data_subscription import DataSubscription
 from .product import Product
 from .salesrep import SalesRep
 from .salesrep_data_subscription import SalesRepDataSubscription
+from .trade import Trade
 
 __all__ = [
     'AirtimeRecieved',
@@ -20,5 +21,6 @@ __all__ = [
     'DataSubscription',
     'Product',
     'SalesRep',
-    'SalesRepDataSubscription'
+    'SalesRepDataSubscription',
+    'Trade'
 ]

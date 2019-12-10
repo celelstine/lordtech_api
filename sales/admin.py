@@ -11,6 +11,7 @@ from .models import (
     Product,
     SalesRep,
     SalesRepDataSubscription,
+    Trade
 )
 
 
@@ -132,4 +133,18 @@ class CashRecievedAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         return super(CashRecievedAdmin, self).get_queryset(
+            request).order_by('-create_date')
+
+
+@admin.register(Trade)
+class TradeAdmin(admin.ModelAdmin):
+    fields = (
+        'id', 'sales_rep', 'card', 'group', 'selling_rate', 'buying_rate',
+        'amount', 'amount_paid', 'is_closed', 'create_date', 'modify_date')
+    list_display = fields
+    readonly_fields = ('id', 'create_date', 'modify_date')
+    search_fields = ['id', 'amount', 'is_closed']
+
+    def get_queryset(self, request):
+        return super(TradeAdmin, self).get_queryset(
             request).order_by('-create_date')

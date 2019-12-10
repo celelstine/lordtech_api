@@ -13,6 +13,7 @@ from .sales import (
     ProductViewSet,
     SalesRepViewSet,
     SalesRepDataSubscriptionViewSet,
+    TradeViewSet
 )
 
 
@@ -28,4 +29,5 @@ __all__ = [
     'SalesRepViewSet',
     'SalesRepDataSubscriptionViewSet',
     'UserViewSet',
+    'TradeViewSet'
 ]

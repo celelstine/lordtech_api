@@ -11,6 +11,7 @@ from sales.models import (
     Product,
     SalesRep,
     SalesRepDataSubscription,
+    Trade
 )
 
 
@@ -81,4 +82,11 @@ class CashRecievedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CashRecieved
+        fields = '__all__'
+
+
+class TradeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Trade
         fields = '__all__'

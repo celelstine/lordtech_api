@@ -19,6 +19,7 @@ from api.v1.serializers import (
     ProductSerializer,
     SalesRepSerializer,
     SalesRepDataSubscriptionSerializer,
+    TradeSerializer
 )
 
 from sales.models import (
@@ -31,7 +32,8 @@ from sales.models import (
     DataSubscription,
     Product,
     SalesRep,
-    SalesRepDataSubscription
+    SalesRepDataSubscription,
+    Trade
 )
 
 
@@ -378,7 +380,7 @@ class CashRecievedViewSet(viewsets.ModelViewSet):
     filter_fields = ('sales_rep', 'amount', 'create_date', 'is_closed')
 
     def update(self, request, pk=None):
-        is_closed = is_closed_record(AirtimeRecieved, pk)
+        is_closed = is_closed_record(CashRecieved, pk)
 
         if is_closed is not False:
             return is_closed
@@ -387,7 +389,7 @@ class CashRecievedViewSet(viewsets.ModelViewSet):
 
     def partial_update(self, request, *args, **Kwargs):
         pk = Kwargs['pk']
-        is_closed = is_closed_record(AirtimeRecieved, pk)
+        is_closed = is_closed_record(CashRecieved, pk)
 
         if is_closed is not False:
             return is_closed
@@ -398,9 +400,46 @@ class CashRecievedViewSet(viewsets.ModelViewSet):
             request,  *args, **Kwargs)
 
     def destroy(self, request, pk=None):
-        is_closed = is_closed_record(AirtimeRecieved, pk, 'delete')
+        is_closed = is_closed_record(CashRecieved, pk, 'delete')
 
         if is_closed is not False:
             return is_closed
 
         return super(AirtimeRecievedViewSet, self).destroy(request, pk=pk)
+
+
+class TradeViewSet(viewsets.ModelViewSet):
+    """manage sales rep giftcard sales"""
+    queryset = Trade.objects.order_by('id')
+    serializer_class = TradeSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = (
+        'sales_rep', 'amount', 'create_date', 'is_closed', 'group', 'card')
+
+    def update(self, request, pk=None):
+        is_closed = is_closed_record(Trade, pk)
+
+        if is_closed is not False:
+            return is_closed
+
+        return super(TradeViewSet, self).update(request, pk=pk)
+
+    def partial_update(self, request, *args, **Kwargs):
+        pk = Kwargs['pk']
+        is_closed = is_closed_record(Trade, pk)
+
+        if is_closed is not False:
+            return is_closed
+
+        # call update but with partial
+        Kwargs['partial'] = True
+        return super(TradeViewSet, self).update(
+            request,  *args, **Kwargs)
+
+    def destroy(self, request, pk=None):
+        is_closed = is_closed_record(Trade, pk, 'delete')
+
+        if is_closed is not False:
+            return is_closed
+
+        return super(TradeViewSet, self).destroy(request, pk=pk)
