@@ -284,15 +284,8 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
             return Response("Sales rep does not exist.",
                             status=status.HTTP_400_BAD_REQUEST)
 
-        start_data = 0.0
-        start_airtime = 0.0
-        # get existing data summary if exist
-        prev_summary = DataSalesSummary.objects.values(
-            'expected_data_balance', 'expected_airtime').last()
-
-        if prev_summary is not None:
-            start_data = prev_summary.get('expected_data_balance')
-            start_airtime = prev_summary.get('expected_airtime')
+        start_data = sales_rep.data_balance
+        start_airtime = sales_rep.airtime_balance
 
         # calculate total airime received; that airtime recieved that are not closed   # noqa
         total_airtime_recieved = sales_rep.airtime_received.filter(
@@ -302,13 +295,13 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         total_direct_sales = 0
         total_data_shared = 0
         income = 0
-        
+
         for s in sales:
             if s.is_direct_sales is True:
                 total_direct_sales += s.cost
             total_data_shared += s.total_mb
             income += s.cost
-            
+
         # calculate total subscription made
         total_sub = sales_rep.subscriptions.filter(
             is_closed=False).aggregate(Sum('amount'))['amount__sum'] or 0
@@ -362,6 +355,9 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         # close shift records
         with transaction.atomic():
             # close records
+            sales_rep.cash_balance = expected_airtime
+            sales_rep.data_balance = expected_data_balance
+            sales_rep.save()
             sales_rep.airtime_received.filter(is_closed=False).update(is_closed=True)  # noqa
             sales_rep.sales.filter(is_closed=False).update(is_closed=True)
             sales_rep.subscriptions.filter(is_closed=False).update(is_closed=True)  # noqa
