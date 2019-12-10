@@ -11,7 +11,8 @@ from sales.models import (
     Product,
     SalesRep,
     SalesRepDataSubscription,
-    Trade
+    Trade,
+    TradeSummary
 )
 
 
@@ -89,4 +90,11 @@ class TradeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Trade
+        fields = '__all__'
+
+
+class TradeSummarySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TradeSummary
         fields = '__all__'

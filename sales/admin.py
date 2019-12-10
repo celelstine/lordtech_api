@@ -11,7 +11,8 @@ from .models import (
     Product,
     SalesRep,
     SalesRepDataSubscription,
-    Trade
+    Trade,
+    TradeSummary
 )
 
 
@@ -147,4 +148,19 @@ class TradeAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         return super(TradeAdmin, self).get_queryset(
+            request).order_by('-create_date')
+
+
+@admin.register(TradeSummary)
+class TradeSummaryAdmin(admin.ModelAdmin):
+    fields = (
+        'id', 'sales_rep', 'total_cash_recieved', 'total_cash_used',
+        'balance', 'is_closed', 'create_date', 'modify_date')
+    list_display = fields
+    readonly_fields = fields
+    search_fields = [
+        'id', 'sales_rep', 'is_closed', 'outstanding', ]
+
+    def get_queryset(self, request):
+        return super(TradeSummaryAdmin, self).get_queryset(
             request).order_by('-create_date')

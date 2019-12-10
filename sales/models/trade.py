@@ -50,6 +50,15 @@ class Trade(BaseAppModelMixin):
     def save(self, *args, **kwargs):
         # ensure that the clean method is call on every save
         self.clean()
-        # auto calculate cost
+        # auto calculate amount_paid
         self.amount_paid = self.amount * self.buying_rate
         super(Trade, self).save(*args, **kwargs)
+
+    def __str__(self):
+        """customize the string representation"""
+        return "%d of  %s sold by %s" % (
+            self.amount, self.card, self.sales_rep)
+
+    class Meta:
+        verbose_name = 'Trade'
+        verbose_name_plural = 'Trades'

@@ -12,7 +12,8 @@ from api.v1.views import (
     SalesRepViewSet,
     SalesRepDataSubscriptionViewSet,
     UserViewSet,
-    TradeViewSet
+    TradeViewSet,
+    TradeSummaryViewSet
 )
 
 router = DefaultRouter()
@@ -29,4 +30,6 @@ router.register(r'salesrep-sub', SalesRepDataSubscriptionViewSet, base_name='sal
 router.register(r'product', ProductViewSet, base_name='product')
 router.register(r'cash-recieved', CashRecievedViewSet, base_name='cash-recieved')  # noqa
 router.register(r'trade', TradeViewSet, base_name='trade')  # noqa
+router.register(r'trade-summary', TradeSummaryViewSet, base_name='trade-summary')  # noqa
+
 urlpatterns = router.urls

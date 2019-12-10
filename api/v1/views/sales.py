@@ -19,7 +19,8 @@ from api.v1.serializers import (
     ProductSerializer,
     SalesRepSerializer,
     SalesRepDataSubscriptionSerializer,
-    TradeSerializer
+    TradeSerializer,
+    TradeSummarySerializer
 )
 
 from sales.models import (
@@ -33,7 +34,8 @@ from sales.models import (
     Product,
     SalesRep,
     SalesRepDataSubscription,
-    Trade
+    Trade,
+    TradeSummary
 )
 
 
@@ -359,7 +361,7 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         # close shift records
         with transaction.atomic():
             # close records
-            sales_rep.cash_balance = expected_airtime
+            sales_rep.airtime_balance = expected_airtime
             sales_rep.data_balance = expected_data_balance
             sales_rep.save()
             sales_rep.airtime_received.filter(is_closed=False).update(is_closed=True)  # noqa
@@ -443,3 +445,84 @@ class TradeViewSet(viewsets.ModelViewSet):
             return is_closed
 
         return super(TradeViewSet, self).destroy(request, pk=pk)
+
+
+class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Viewset to read and create (no update or delete) data sales summary
+    """
+    queryset = TradeSummary.objects.order_by('-create_date')
+    serializer_class = TradeSummarySerializer
+
+    @action(methods=['post'], detail=False)
+    def close_shift(self, request, pk=None):
+        """
+        Close sales for a particular shift and create a summary of the sales
+        """
+
+        sales_rep_id = request.data.get('sales_rep', None)
+        create = request.data.get('create', False)
+
+        if sales_rep_id is None:
+            return Response("Please specfic value for sales rep",
+                            status=status.HTTP_400_BAD_REQUEST)
+        # get the sales rep and ensure that he is a giftcard sales rep
+        try:
+            sales_rep = SalesRep.objects.get(pk=sales_rep_id)
+
+            if sales_rep.category != SalesRep.GIFTCARD:
+                return Response("Invalid Sales Rep, should be  a data sales rep",  # noqa
+                                status=status.HTTP_400_BAD_REQUEST)
+        except SalesRep.DoesNotExist:
+            return Response("Sales rep does not exist.",
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        Yuan_to_naira = 0
+        # calculate profit
+        try:
+            Yuan_to_naira = Configuration.objects.get(key='Yuan_to_naira')
+        except Configuration.DoesNotExist:
+            return Response('Please add a value for config \'Yuan_to_naira\'')
+
+        start_cash = sales_rep.cash_balance
+
+        total_cash_recieved = sales_rep.cash_received.filter(
+            is_closed=False).aggregate(Sum('amount'))['amount__sum'] or 0
+
+        trades = sales_rep.trades.filter(is_closed=False)
+        total_cash_used = 0
+        income = 0
+
+        for trade in trades:
+            total_cash_used += trade.amount_paid
+            income += trade.buying_rate * trade.amount
+
+        balance = start_cash + total_cash_recieved - total_cash_used
+
+        # profit = income - expenditure
+        income *= int(Yuan_to_naira.value)
+        profit = income - total_cash_used
+
+        summary = {
+            'sales_rep_id': sales_rep_id,
+            'total_cash_recieved': total_cash_recieved,
+            'total_cash_used': total_cash_used,
+            'balance': balance,
+            'is_closed': True
+        }
+
+        if create is False:
+            return Response(summary)
+
+        # close shift records
+        with transaction.atomic():
+            # close records
+            sales_rep.cash_balance = balance
+            sales_rep.save()
+            sales_rep.cash_received.filter(is_closed=False).update(is_closed=True)  # noqa
+            sales_rep.trades.filter(is_closed=False).update(is_closed=True)
+            # TODO: create profit
+            trade_summary = TradeSummary.objects.create(**summary)
+
+            data = self.get_serializer_class()(trade_summary).data
+            return Response(data, status=status.HTTP_201_CREATED)

@@ -13,7 +13,8 @@ from .sales import (
     ProductSerializer,
     SalesRepSerializer,
     SalesRepDataSubscriptionSerializer,
-    TradeSerializer
+    TradeSerializer,
+    TradeSummarySerializer
 )
 
 
@@ -30,5 +31,6 @@ __all__ = [
     'SalesRepDataSubscription',
     'SalesRepDataSubscriptionSerializer',
     'UserSerializer',
-    'TradeSerializer'
+    'TradeSerializer',
+    'TradeSummarySerializer'
 ]
