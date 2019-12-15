@@ -18,7 +18,8 @@ import dj_database_url
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # load env from a file
-load_dotenv(dotenv_path=os.path.join(BASE_DIR, '.env'))
+if os.getenv('HOST_ENV', 'Dev') != 'HEROKU':
+    load_dotenv(dotenv_path=os.path.join(BASE_DIR, '.env'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -166,3 +167,10 @@ REST_FRAMEWORK = {
 
 JWT_EXP_DELTA_DAYS = 20
 JWT_ALGORITHM = 'HS256'
+
+
+# config deployment on heroku
+if os.getenv('HOST_ENV') == 'HEROKU':
+    import django_heroku
+    # activate django_heroku
+    django_heroku.settings(locals())
