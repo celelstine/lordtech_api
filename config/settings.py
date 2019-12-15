@@ -33,7 +33,9 @@ DEBUG = os.getenv('DEBUG', True)
 
 AUTH_USER_MODEL = 'LtSales_auth.User'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '*'
+]
 
 
 # Application definition

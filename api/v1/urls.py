@@ -1,7 +1,9 @@
+from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from api.v1.views import (
     AirtimeRecievedViewSet,
+    block_io_webhook,
     CashRecievedViewSet,
     ConfigurationViewSet,
     DataPlanViewSet,
@@ -34,4 +36,9 @@ router.register(r'trade', TradeViewSet, base_name='trade')
 router.register(r'trade-summary', TradeSummaryViewSet, base_name='trade-summary')  # noqa
 router.register(r'profit', ProfitViewSet, base_name='profit')
 
-urlpatterns = router.urls
+
+urlpatterns = [
+    path(r'webhook/block-io/', block_io_webhook, name='block-io-webhook'),
+]
+
+urlpatterns += router.urls

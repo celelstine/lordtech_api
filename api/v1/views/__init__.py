@@ -18,9 +18,12 @@ from .sales import (
     TradeSummaryViewSet
 )
 
+from .webhooks import block_io_webhook
+
 
 __all__ = [
     'AirtimeRecievedViewSet',
+    'block_io_webhook',
     'CashRecievedViewSet',
     'ConfigurationViewSet',
     'DataPlanViewSet',
