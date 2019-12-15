@@ -7,6 +7,7 @@ from .data_sales import DataSales
 from .data_sales_diary_summary import DataSalesSummary
 from .data_subscription import DataSubscription
 from .product import Product
+from .profit import Profit
 from .salesrep import SalesRep
 from .salesrep_data_subscription import SalesRepDataSubscription
 from .trade import Trade
@@ -21,6 +22,7 @@ __all__ = [
     'DataSalesSummary',
     'DataSubscription',
     'Product',
+    'Profit',
     'SalesRep',
     'SalesRepDataSubscription',
     'Trade',

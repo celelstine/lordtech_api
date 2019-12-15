@@ -9,6 +9,7 @@ from sales.models import (
     DataSalesSummary,
     DataSubscription,
     Product,
+    Profit,
     SalesRep,
     SalesRepDataSubscription,
     Trade,
@@ -97,4 +98,11 @@ class TradeSummarySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TradeSummary
+        fields = '__all__'
+
+
+class ProfitSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Profit
         fields = '__all__'

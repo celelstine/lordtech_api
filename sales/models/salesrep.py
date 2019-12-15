@@ -33,4 +33,4 @@ class SalesRep(BaseAppModelMixin):
 
     def __str__(self):
         """customize the string representation"""
-        return "%s (department %s)" % (self.get_category_display(), self.name)
+        return "%s (department %s)" % (self.name, self.get_category_display())

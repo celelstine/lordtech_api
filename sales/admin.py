@@ -9,6 +9,7 @@ from .models import (
     DataSalesSummary,
     DataSubscription,
     Product,
+    Profit,
     SalesRep,
     SalesRepDataSubscription,
     Trade,
@@ -155,12 +156,26 @@ class TradeAdmin(admin.ModelAdmin):
 class TradeSummaryAdmin(admin.ModelAdmin):
     fields = (
         'id', 'sales_rep', 'total_cash_recieved', 'total_cash_used',
-        'balance', 'is_closed', 'create_date', 'modify_date')
+        'balance',  'is_closed', 'create_date', 'modify_date')
     list_display = fields
-    readonly_fields = fields
+    readonly_fields = ('id', 'create_date', 'modify_date')
     search_fields = [
-        'id', 'sales_rep', 'is_closed', 'outstanding', ]
+        'id', 'sales_rep', 'total_cash_recieved', 'total_cash_used',
+         'balance', 'is_closed', 'create_date']
 
     def get_queryset(self, request):
         return super(TradeSummaryAdmin, self).get_queryset(
+            request).order_by('-create_date')
+
+
+@admin.register(Profit)
+class ProfitAdmin(admin.ModelAdmin):
+    fields = (
+        'id', 'product', 'amount','sales_date', 'create_date', 'modify_date', )
+    list_display = fields
+    readonly_fields = fields
+    search_fields = ['id', 'product', 'amount']
+
+    def get_queryset(self, request):
+        return super(ProfitAdmin, self).get_queryset(
             request).order_by('-create_date')

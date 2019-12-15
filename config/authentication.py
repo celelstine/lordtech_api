@@ -5,7 +5,7 @@ from rest_framework import permissions
 User = get_user_model()
 
 
-class IsAdminOnly(permissions.BasePermission):
+class IsAdminOnlyPermission(permissions.BasePermission):
     """authorization for only admin users"""
 
     def has_permission(self, request, view):

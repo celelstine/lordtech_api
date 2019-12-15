@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db.models import Sum
 from django.utils.timezone import now
 from django.db import transaction
@@ -8,6 +9,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters import rest_framework as filters
 
+from config.authentication import IsAdminOnlyPermission
+
+from api.v1.filters import ProfitFilter
 from api.v1.serializers import (
     AirtimeRecievedSerializer,
     CashRecievedSerializer,
@@ -17,6 +21,7 @@ from api.v1.serializers import (
     DataSalesSummarySerializer,
     DataSubscriptionSerializer,
     ProductSerializer,
+    ProfitSerializer,
     SalesRepSerializer,
     SalesRepDataSubscriptionSerializer,
     TradeSerializer,
@@ -32,6 +37,7 @@ from sales.models import (
     DataSalesSummary,
     DataSubscription,
     Product,
+    Profit,
     SalesRep,
     SalesRepDataSubscription,
     Trade,
@@ -260,9 +266,13 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = DataSalesSummary.objects.order_by('-create_date')
     serializer_class = DataSalesSummarySerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = (
+        'id', 'sales_rep', 'total_cash_recieved', 'total_cash_used',
+        'balance', 'is_closed', 'create_date', )
 
     @action(methods=['post'], detail=False)
-    def create_summary(self, request, pk=None):
+    def close_shift(self, request, pk=None):
         """
         Close sales for a particular shift and create a summary of the sales
         """
@@ -335,7 +345,10 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
 
         expenditure = (data_sub.cost_per_sub * total_data_shared) / data_sub.mb_per_sub   # noqa
 
-        # profit = income - expenditure
+        profit = income - expenditure
+
+        if sales.count != 0:
+            Profit.objects.create(amount=profit, product=product)
 
         summary = {
             'sales_date': sales_date,
@@ -453,6 +466,10 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = TradeSummary.objects.order_by('-create_date')
     serializer_class = TradeSummarySerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = (
+        'id', 'sales_date', 'is_closed', 'outstanding',
+        'no_order_treated', 'sales_rep', )
 
     @action(methods=['post'], detail=False)
     def close_shift(self, request, pk=None):
@@ -499,9 +516,12 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
 
         balance = start_cash + total_cash_recieved - total_cash_used
 
-        # profit = income - expenditure
+        # create profit
         income *= int(Yuan_to_naira.value)
         profit = income - total_cash_used
+
+        if trades.first() is not None:
+            Profit.objects.create(amount=profit, product=trades.first().card)
 
         summary = {
             'sales_rep_id': sales_rep_id,
@@ -526,3 +546,56 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
 
             data = self.get_serializer_class()(trade_summary).data
             return Response(data, status=status.HTTP_201_CREATED)
+
+
+class ProfitViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    readonly Viewset to read profit
+    """
+    queryset = Profit.objects.order_by('-sales_date')
+    serializer_class = ProfitSerializer
+    permission_classes = (IsAdminOnlyPermission,)
+    filter_class = ProfitFilter
+
+    def list(self, request):
+        params = request.query_params
+        sales_date = params.get('sales_date__date', None)
+        sales_to_date = params.get('sales_date__date__lt', None)
+        sales_from_date = params.get('sales_date__date__gt', None)
+
+        if not sales_date and not (sales_from_date and sales_to_date):
+            return super(ProfitViewSet, self).list(request)
+
+        qs = self.filter_queryset(self.get_queryset())
+        if sales_to_date is not None and sales_from_date is not None:
+            sales_from_date = datetime.strptime(sales_from_date, "%Y-%m-%d")
+            sales_to_date = datetime.strptime(sales_to_date, "%Y-%m-%d")
+            interval_in_days = (sales_to_date-sales_from_date).days
+            date_aggregate = ''
+
+            if interval_in_days < 1:
+                return Response('start date can not be ahead of end date',
+                                status=status.HTTP_400_BAD_REQUEST)
+
+            if interval_in_days <= 30:
+                # get aggregate by day
+                date_aggregate = 'sales_date__day'
+            elif interval_in_days <= (7 * 20):
+                # get aggregate by week
+                date_aggregate = 'sales_date__week'
+            elif interval_in_days <= 365:
+                # get aggregate by month
+                date_aggregate = 'sales_date__month'
+            else:
+                # get aggregate by year
+                date_aggregate = 'sales_date__year'
+
+            profits = qs.values(
+                    'product', date_aggregate).order_by(
+                        date_aggregate).annotate(total=Sum('amount'))
+        elif sales_date is not None:
+            profits = qs.values(
+                    'product', 'sales_date').order_by(
+                        'product').annotate(total=Sum('amount'))
+
+        return Response(list(profits))
