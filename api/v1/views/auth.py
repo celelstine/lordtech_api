@@ -89,7 +89,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
             refresh_token = user.get_refresh_token()
             response = refresh_token.generate_access_token()
-            response.update({'username': username, 'role': user.role})
+            response.update({
+                'username': username, 'role': user.get_role_display()})
             return Response(response)
         except User.DoesNotExist:
             return failed_login()
