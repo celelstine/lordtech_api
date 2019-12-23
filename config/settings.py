@@ -51,11 +51,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'LtSales_auth.apps.AuthConfig',
     'sales.apps.SalesConfig',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -174,3 +176,5 @@ if os.getenv('HOST_ENV') == 'HEROKU':
     import django_heroku
     # activate django_heroku
     django_heroku.settings(locals())
+
+CORS_ORIGIN_ALLOW_ALL = True
