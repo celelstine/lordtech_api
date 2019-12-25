@@ -50,7 +50,7 @@ class ConfigurationViewSet(viewsets.ModelViewSet):
     queryset = Configuration.objects.filter(is_active=True).order_by('id')
     serializer_class = ConfigurationSerializer
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('category', 'key')
+    filter_fields = ('category', 'key', )
 
     def create(self, request):
         """customize create method to validate object category"""
@@ -75,7 +75,7 @@ class SalesRepViewSet(viewsets.ModelViewSet):
     queryset = SalesRep.objects.filter(is_active=True).order_by('id')
     serializer_class = SalesRepSerializer
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('name', 'category')
+    filter_fields = ('name', 'category',)
 
     def create(self, request):
         """customize create method to validate object category"""
@@ -100,7 +100,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.filter(is_active=True).order_by('id')
     serializer_class = ProductSerializer
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('name', 'category')
+    filter_fields = ('name', 'category',)
 
     def create(self, request):
         """customize create method to validate object category"""
@@ -133,7 +133,7 @@ class DataPlanViewSet(viewsets.ModelViewSet):
     queryset = DataPlan.objects.filter(is_active=True).order_by('id')
     serializer_class = DataPlanSerializer
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('network', 'name')
+    filter_fields = ('network', 'name',)
 
 
 def is_closed_record(model, pk, action='update'):
@@ -154,7 +154,7 @@ class SalesRepDataSubscriptionViewSet(viewsets.ModelViewSet):
     queryset = SalesRepDataSubscription.objects.order_by('id')
     serializer_class = SalesRepDataSubscriptionSerializer
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('sub', 'sales_rep', 'create_date', 'is_closed')
+    filter_fields = ('sub', 'sales_rep', 'create_date', 'is_closed',)
 
     def update(self, request, pk=None):
         is_closed = is_closed_record(SalesRepDataSubscription, pk)
@@ -192,7 +192,7 @@ class AirtimeRecievedViewSet(viewsets.ModelViewSet):
     queryset = AirtimeRecieved.objects.order_by('id')
     serializer_class = AirtimeRecievedSerializer
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('sales_rep', 'amount', 'create_date', 'is_closed')
+    filter_fields = ('sales_rep', 'amount', 'create_date', 'is_closed',)
 
     def update(self, request, pk=None):
         is_closed = is_closed_record(AirtimeRecieved, pk)
@@ -229,7 +229,7 @@ class DataSalesViewSet(viewsets.ModelViewSet):
     serializer_class = DataSalesSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = (
-        'sales_rep', 'amount', 'create_date', 'is_closed', 'is_direct_sales')
+        'sales_rep', 'amount', 'create_date', 'is_closed', 'is_direct_sales',)
 
     def update(self, request, pk=None):
         is_closed = is_closed_record(DataSales, pk)
@@ -268,8 +268,11 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = DataSalesSummarySerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = (
-        'id', 'sales_rep', 'total_cash_recieved', 'total_cash_used',
-        'balance', 'is_closed', 'create_date', )
+        'id', 'sales_rep', 'Start_airtime', 'sales_date',
+        'Start_data', 'total_airtime_recieved', 'total_direct_Sales',
+        'total_sub_made', 'expected_airtime', 'actual_airtime',
+        'expected_data_balance', 'no_order_treated', 'outstanding',
+        'is_closed',)
 
     @action(methods=['post'], detail=False)
     def close_shift(self, request, pk=None):
@@ -392,7 +395,7 @@ class CashRecievedViewSet(viewsets.ModelViewSet):
     queryset = CashRecieved.objects.order_by('id')
     serializer_class = CashRecievedSerializer
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('sales_rep', 'amount', 'create_date', 'is_closed')
+    filter_fields = ('sales_rep', 'amount', 'create_date', 'is_closed',)
 
     def update(self, request, pk=None):
         is_closed = is_closed_record(CashRecieved, pk)
@@ -429,7 +432,7 @@ class TradeViewSet(viewsets.ModelViewSet):
     serializer_class = TradeSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = (
-        'sales_rep', 'amount', 'create_date', 'is_closed', 'group', 'card')
+        'sales_rep', 'amount', 'create_date', 'is_closed', 'group', 'card',)
 
     def update(self, request, pk=None):
         is_closed = is_closed_record(Trade, pk)
@@ -468,8 +471,8 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TradeSummarySerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = (
-        'id', 'sales_date', 'is_closed', 'outstanding',
-        'no_order_treated', 'sales_rep', )
+        'id', 'total_cash_recieved', 'is_closed', 'total_cash_used',
+        'sales_rep', 'balance',)
 
     @action(methods=['post'], detail=False)
     def close_shift(self, request, pk=None):

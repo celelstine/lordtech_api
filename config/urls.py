@@ -39,5 +39,5 @@ api_urlpatterns = [
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('doc/', schema_view, name="docs"),
+    # path('doc/', schema_view, name="docs"),
 ] + api_urlpatterns

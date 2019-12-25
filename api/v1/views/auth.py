@@ -17,7 +17,9 @@ User = get_user_model()
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    """You can handle every authentication and user management on your account """ # noqa
+    """
+    You can handle every authentication and user management on your account
+    """
     queryset = User.objects.filter(is_active=True)
     serializer_class = UserSerializer
     permission_classes = (UserViewSetPermission,)
@@ -60,7 +62,7 @@ class UserViewSet(viewsets.ModelViewSet):
         response = {
             'username': username,
             'password': password,
-            'role': role
+            'role': u.get_role_display()
         }
 
         return Response(response, status=status.HTTP_201_CREATED)
