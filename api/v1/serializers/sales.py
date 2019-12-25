@@ -43,6 +43,7 @@ class DataSubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = DataSubscription
         fields = '__all__'
+        depth = 1
 
 
 class DataPlanSerializer(serializers.ModelSerializer):
@@ -50,6 +51,7 @@ class DataPlanSerializer(serializers.ModelSerializer):
     class Meta:
         model = DataPlan
         fields = '__all__'
+        depth = 1
 
 
 class SalesRepDataSubscriptionSerializer(serializers.ModelSerializer):
@@ -64,6 +66,7 @@ class AirtimeRecievedSerializer(serializers.ModelSerializer):
     class Meta:
         model = AirtimeRecieved
         fields = '__all__'
+        depth = 1
 
 
 class DataSalesSerializer(serializers.ModelSerializer):
@@ -71,6 +74,7 @@ class DataSalesSerializer(serializers.ModelSerializer):
     class Meta:
         model = DataSales
         fields = '__all__'
+        depth = 1
 
 
 class DataSalesSummarySerializer(serializers.ModelSerializer):
@@ -78,6 +82,7 @@ class DataSalesSummarySerializer(serializers.ModelSerializer):
     class Meta:
         model = DataSalesSummary
         fields = '__all__'
+        depth = 1
 
 
 class CashRecievedSerializer(serializers.ModelSerializer):
