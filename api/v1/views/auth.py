@@ -62,7 +62,8 @@ class UserViewSet(viewsets.ModelViewSet):
         response = {
             'username': username,
             'password': password,
-            'role': u.get_role_display()
+            'role': u.get_role_display(),
+            'is_admin': u.is_superuser
         }
 
         return Response(response, status=status.HTTP_201_CREATED)
@@ -92,7 +93,10 @@ class UserViewSet(viewsets.ModelViewSet):
             refresh_token = user.get_refresh_token()
             response = refresh_token.generate_access_token()
             response.update({
-                'username': username, 'role': user.get_role_display()})
+                'username': username,
+                'role': user.get_role_display(),
+                'is_admin': user.is_superuser
+            })
             return Response(response)
         except User.DoesNotExist:
             return failed_login()
