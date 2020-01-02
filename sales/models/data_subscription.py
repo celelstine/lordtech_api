@@ -19,6 +19,7 @@ class DataSubscription(BaseAppModelMixin):
 
     def clean(self):
         # ensure that the sub are for data product
+        print('this', self.__dict__)
         if self.network.category != Product.DATA:
             raise ValidationError(
                 'Invalid category, valid value should be %s' % Product.DATA)
