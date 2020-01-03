@@ -74,7 +74,7 @@ class SalesRepDataSubscriptionSerializer(serializers.ModelSerializer):
 class SalesRepDataSubscriptionGetSerializer(serializers.ModelSerializer):
 
     class Meta(SalesRepDataSubscriptionSerializer.Meta):
-        depth = 1
+        depth = 2
 
 
 class AirtimeRecievedSerializer(serializers.ModelSerializer):
