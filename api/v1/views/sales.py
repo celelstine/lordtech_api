@@ -16,20 +16,22 @@ from api.v1.serializers import (
     AirtimeRecievedSerializer,
     AirtimeRecievedGetSerializer,
     CashRecievedSerializer,
+    CashRecievedGetSerializer,
     ConfigurationSerializer,
     DataPlanSerializer,
     DataPlanGetSerializer,
     DataSalesSerializer,
     DataSalesGetSerializer,
     DataSalesSummarySerializer,
-    DataSalesSummaryGetSerializer,
     DataSubscriptionSerializer,
     DataSubscriptionGetSerializer,
     ProductSerializer,
     ProfitSerializer,
     SalesRepSerializer,
     SalesRepDataSubscriptionSerializer,
+    SalesRepDataSubscriptionGetSerializer,
     TradeSerializer,
+    TradeGetSerializer,
     TradeSummarySerializer
 )
 
@@ -167,9 +169,14 @@ def is_closed_record(model, pk, action='update'):
 class SalesRepDataSubscriptionViewSet(viewsets.ModelViewSet):
     """manage sales rep DataSubscription"""
     queryset = SalesRepDataSubscription.objects.order_by('id')
-    serializer_class = SalesRepDataSubscriptionSerializer
+    # serializer_class = SalesRepDataSubscriptionSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('sub', 'sales_rep', 'create_date', 'is_closed',)
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return SalesRepDataSubscriptionGetSerializer
+        return SalesRepDataSubscriptionSerializer
 
     def update(self, request, pk=None):
         is_closed = is_closed_record(SalesRepDataSubscription, pk)
@@ -290,7 +297,7 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
     Viewset to read and create (no update or delete) data sales summary
     """
     queryset = DataSalesSummary.objects.order_by('-create_date')
-    # serializer_class = DataSalesSummarySerializer
+    serializer_class = DataSalesSummarySerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = (
         'id', 'sales_rep', 'Start_airtime', 'sales_date',
@@ -298,11 +305,6 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         'total_sub_made', 'expected_airtime', 'actual_airtime',
         'expected_data_balance', 'no_order_treated', 'outstanding',
         'is_closed',)
-
-    def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return DataSalesSummaryGetSerializer
-        return DataSalesSummarySerializer
 
     @action(methods=['post'], detail=False)
     def close_shift(self, request, pk=None):
@@ -427,6 +429,11 @@ class CashRecievedViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('sales_rep', 'amount', 'create_date', 'is_closed',)
 
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return CashRecievedGetSerializer
+        return CashRecievedSerializer
+
     def update(self, request, pk=None):
         is_closed = is_closed_record(CashRecieved, pk)
 
@@ -459,10 +466,15 @@ class CashRecievedViewSet(viewsets.ModelViewSet):
 class TradeViewSet(viewsets.ModelViewSet):
     """manage sales rep giftcard sales"""
     queryset = Trade.objects.order_by('id')
-    serializer_class = TradeSerializer
+    # serializer_class = TradeSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = (
         'sales_rep', 'amount', 'create_date', 'is_closed', 'group', 'card',)
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return TradeGetSerializer
+        return TradeSerializer
 
     def update(self, request, pk=None):
         is_closed = is_closed_record(Trade, pk)

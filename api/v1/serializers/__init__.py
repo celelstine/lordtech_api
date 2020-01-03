@@ -6,20 +6,22 @@ from .sales import (
     AirtimeRecievedSerializer,
     AirtimeRecievedGetSerializer,
     CashRecievedSerializer,
+    CashRecievedGetSerializer,
     ConfigurationSerializer,
     DataPlanSerializer,
     DataPlanGetSerializer,
     DataSalesSerializer,
     DataSalesGetSerializer,
     DataSalesSummarySerializer,
-    DataSalesSummaryGetSerializer,
     DataSubscriptionSerializer,
     DataSubscriptionGetSerializer,
     ProductSerializer,
     ProfitSerializer,
     SalesRepSerializer,
     SalesRepDataSubscriptionSerializer,
+    SalesRepDataSubscriptionGetSerializer,
     TradeSerializer,
+    TradeGetSerializer,
     TradeSummarySerializer
 )
 
@@ -28,6 +30,7 @@ __all__ = [
     'AirtimeRecievedSerializer',
     'AirtimeRecievedGetSerializer',
     'CashRecievedSerializer',
+    'CashRecievedGetSerializer',
     'ConfigurationSerializer',
     'DataPlanSerializer',
     'DataPlanGetSerializer'
@@ -40,7 +43,9 @@ __all__ = [
     'SalesRepSerializer',
     'SalesRepDataSubscription',
     'SalesRepDataSubscriptionSerializer',
+    'SalesRepDataSubscriptionGetSerializer',
     'UserSerializer',
     'TradeSerializer',
+    'TradeGetSerializer',
     'TradeSummarySerializer'
 ]

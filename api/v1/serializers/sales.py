@@ -71,6 +71,12 @@ class SalesRepDataSubscriptionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class SalesRepDataSubscriptionGetSerializer(serializers.ModelSerializer):
+
+    class Meta(SalesRepDataSubscriptionSerializer.Meta):
+        depth = 1
+
+
 class AirtimeRecievedSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -102,11 +108,6 @@ class DataSalesSummarySerializer(serializers.ModelSerializer):
     class Meta:
         model = DataSalesSummary
         fields = '__all__'
-
-
-class DataSalesSummaryGetSerializer(serializers.ModelSerializer):
-
-    class Meta(DataSalesSummarySerializer.Meta):
         depth = 1
 
 
@@ -117,6 +118,12 @@ class CashRecievedSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CashRecievedGetSerializer(CashRecievedSerializer):
+
+    class Meta(CashRecievedSerializer.Meta):
+        depth = 1
+
+
 class TradeSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -124,11 +131,18 @@ class TradeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class TradeGetSerializer(TradeSerializer):
+
+    class Meta(TradeSerializer.Meta):
+        depth = 1
+
+
 class TradeSummarySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TradeSummary
         fields = '__all__'
+        depth = 1
 
 
 class ProfitSerializer(serializers.ModelSerializer):
@@ -136,3 +150,5 @@ class ProfitSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profit
         fields = '__all__'
+        depth = 1
+
