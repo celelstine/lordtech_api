@@ -100,7 +100,7 @@ class DataSalesSerializer(serializers.ModelSerializer):
 class DataSalesGetSerializer(DataSubscriptionSerializer):
 
     class Meta(DataSalesSerializer.Meta):
-        depth = 1
+        depth = 2
 
 
 class DataSalesSummarySerializer(serializers.ModelSerializer):
@@ -151,4 +151,3 @@ class ProfitSerializer(serializers.ModelSerializer):
         model = Profit
         fields = '__all__'
         depth = 1
-

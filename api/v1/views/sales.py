@@ -219,7 +219,7 @@ class AirtimeRecievedViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return AirtimeRecievedGetSerializer
-        return AirtimeRecieved
+        return AirtimeRecievedSerializer
 
     def update(self, request, pk=None):
         is_closed = is_closed_record(AirtimeRecieved, pk)
