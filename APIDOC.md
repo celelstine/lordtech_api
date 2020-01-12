@@ -795,3 +795,262 @@ total_mb: number
 
     ```
 
+
+- #### Cash Recieved `cash-recieved/` `protected`
+`model fields:`
+```
+sales_rep: string (Gift card sales rep uuid)
+amount: positive integer required
+```
+  - **List ['']**
+    ```
+    request Query String GET
+    {
+        sales_rep: string <Gift card sales rep uuid>,
+        amount: number
+    }
+
+    response 200
+    {
+        "count": 3,
+        "next": null,
+        "previous": null,
+        "results": [
+        {
+            "id": "a769325a-db22-430e-8ff5-acabb7132a8c",
+            "create_date": "2019-12-10T21:17:54.288711Z",
+            "modify_date": "2019-12-10T21:17:54.288711Z",
+            "amount": 13,
+            "is_closed": true,
+            "sales_rep": {
+                "id": "f8ada025-4776-40af-984d-e8f71c669e3e",
+                "create_date": "2019-12-10T21:17:37.528646Z",
+                "modify_date": "2020-01-04T15:23:27.121695Z",
+                "name": "me",
+                "category": "gc",
+                "is_active": true,
+                "cash_balance": -14731,
+                "airtime_balance": 0,
+                "data_balance": 0
+            }
+        }
+            ...
+        ]
+    }
+
+    ```
+- **Create ['']**
+    ```
+    request Request Payload POST
+    validation; same as model
+
+    response 201
+        {
+            "id": "a769325a-db22-430e-8ff5-acabb7132a8c",
+            "create_date": "2019-12-10T21:17:54.288711Z",
+            "modify_date": "2019-12-10T21:17:54.288711Z",
+            "amount": 13,
+            "is_closed": true,
+            "sales_rep": {
+                "id": "f8ada025-4776-40af-984d-e8f71c669e3e",
+                "create_date": "2019-12-10T21:17:37.528646Z",
+                "modify_date": "2020-01-04T15:23:27.121695Z",
+                "name": "me",
+                "category": "gc",
+                "is_active": true,
+                "cash_balance": -14731,
+                "airtime_balance": 0,
+                "data_balance": 0
+            }
+        }
+
+    ```
+
+- **Details Route ['/{id}']**
+   - patch
+   - put
+   - get
+   - delete
+
+
+- #### Trade `trade/` `protected`
+`model fields:`
+```
+sales_rep: string (Gift card sales rep uuid)
+group: string <group where card was loaded> required
+card: string (uuid from giftcard product)
+selling_rate: positive decimal (the selling rate in Yaun)
+buying_rate: positive decimal (the buying rate in Naira)
+amount: positive integer (the worth of the gift cards)
+amount_paid: auto generated (amount in Naira paid to customer)
+```
+  - **List ['']**
+    ```
+    request Query String GET
+    {
+        sales_rep: string <data sales rep uuid>,
+        amount: number.
+        create_date,
+        group,
+        card: uuid for the giftcard product
+    }
+
+    response 200
+    {
+        "count": 3,
+        "next": null,
+        "previous": null,
+        "results": [
+        {
+            "id": "39cbf6a6-c450-45a1-b952-546a3d08bf5c",
+            "create_date": "2019-12-10T21:57:15.123295Z",
+            "modify_date": "2019-12-10T21:57:15.123295Z",
+            "group": "g[1",
+            "selling_rate": 5,
+            "buying_rate": 9,
+            "amount": 6,
+            "amount_paid": 54,
+            "is_closed": true,
+            "sales_rep": {
+                "id": "f8ada025-4776-40af-984d-e8f71c669e3e",
+                "create_date": "2019-12-10T21:17:37.528646Z",
+                "modify_date": "2020-01-04T15:23:27.121695Z",
+                "name": "me",
+                "category": "gc",
+                "is_active": true,
+                "cash_balance": -14731,
+                "airtime_balance": 0,
+                "data_balance": 0
+            },
+            "card": {
+                "id": "94813d97-ecf8-4b69-b34c-c44fbedbffdd",
+                "create_date": "2019-12-10T21:47:44.612727Z",
+                "modify_date": "2019-12-10T21:47:44.612727Z",
+                "name": "US itunes",
+                "category": "gc",
+                "is_active": true
+            }
+        },
+            ...
+        ]
+    }
+
+    ```
+- **Create ['']**
+    ```
+    request Request Payload POST
+    validation; same as model
+
+    response 201
+        {
+            "id": "39cbf6a6-c450-45a1-b952-546a3d08bf5c",
+            "create_date": "2019-12-10T21:57:15.123295Z",
+            "modify_date": "2019-12-10T21:57:15.123295Z",
+            "group": "g[1",
+            "selling_rate": 5,
+            "buying_rate": 9,
+            "amount": 6,
+            "amount_paid": 54,
+            "is_closed": true,
+            "sales_rep": {
+                "id": "f8ada025-4776-40af-984d-e8f71c669e3e",
+                "create_date": "2019-12-10T21:17:37.528646Z",
+                "modify_date": "2020-01-04T15:23:27.121695Z",
+                "name": "me",
+                "category": "gc",
+                "is_active": true,
+                "cash_balance": -14731,
+                "airtime_balance": 0,
+                "data_balance": 0
+            },
+            "card": {
+                "id": "94813d97-ecf8-4b69-b34c-c44fbedbffdd",
+                "create_date": "2019-12-10T21:47:44.612727Z",
+                "modify_date": "2019-12-10T21:47:44.612727Z",
+                "name": "US itunes",
+                "category": "gc",
+                "is_active": true
+            }
+        },
+
+    ```
+
+- **Details Route ['/{id}']**
+   - patch
+   - put
+   - get
+   - delete
+
+
+- #### Trade summary `trade-summary/` `protected`
+`model fields:`
+```
+sales_rep: string  required (gift card sales rep  uuid)
+
+# auto generate fields
+total_cash_recieved: number
+total_cash_used: number
+balance: number
+```
+  - **Close Shift  ['/close_shift']**
+    ```
+    request Payload POST
+    {
+        sales_rep: string <sales rep uuid> required
+    }
+
+    response 200
+    {
+        "count": 3,
+        "next": null,
+        "previous": null,
+        "results": [
+        {
+            "id": "86bc3807-6518-4ce8-b2b1-8170f6b54201",
+            "create_date": "2019-12-10T22:46:31.635974Z",
+            "modify_date": "2019-12-10T22:46:31.635974Z",
+            "total_cash_recieved": 1313,
+            "total_cash_used": 16054,
+            "balance": -14731,
+            "is_closed": true,
+            "sales_rep": {
+                "id": "f8ada025-4776-40af-984d-e8f71c669e3e",
+                "create_date": "2019-12-10T21:17:37.528646Z",
+                "modify_date": "2020-01-04T15:23:27.121695Z",
+                "name": "me",
+                "category": "gc",
+                "is_active": true,
+                "cash_balance": -14731,
+                "airtime_balance": 0,
+                "data_balance": 0
+            }
+        }
+            ...
+        ]
+    }
+
+    ```
+- **Detail ['/${id}']** GET
+    ```
+        {
+            "id": "86bc3807-6518-4ce8-b2b1-8170f6b54201",
+            "create_date": "2019-12-10T22:46:31.635974Z",
+            "modify_date": "2019-12-10T22:46:31.635974Z",
+            "total_cash_recieved": 1313,
+            "total_cash_used": 16054,
+            "balance": -14731,
+            "is_closed": true,
+            "sales_rep": {
+                "id": "f8ada025-4776-40af-984d-e8f71c669e3e",
+                "create_date": "2019-12-10T21:17:37.528646Z",
+                "modify_date": "2020-01-04T15:23:27.121695Z",
+                "name": "me",
+                "category": "gc",
+                "is_active": true,
+                "cash_balance": -14731,
+                "airtime_balance": 0,
+                "data_balance": 0
+            }
+        }
+
+    ```
