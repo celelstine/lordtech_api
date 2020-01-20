@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 
 def failed_login():
-    return Response('Wrong email or password.',
+    return Response('Wrong username or password.',
                     status=status.HTTP_401_UNAUTHORIZED)
 
 
