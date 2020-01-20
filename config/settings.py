@@ -174,7 +174,7 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }
 
-JWT_EXP_DELTA_DAYS = 20
+JWT_EXP_DELTA_DAYS = 1
 JWT_ALGORITHM = 'HS256'
 
 
