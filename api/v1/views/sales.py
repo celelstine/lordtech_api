@@ -425,7 +425,7 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
 class CashRecievedViewSet(viewsets.ModelViewSet):
     """manage sales rep DataSubscription"""
     queryset = CashRecieved.objects.order_by('id')
-    serializer_class = CashRecievedSerializer
+    # serializer_class = CashRecievedSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('sales_rep', 'amount', 'create_date', 'is_closed',)
 
@@ -440,7 +440,7 @@ class CashRecievedViewSet(viewsets.ModelViewSet):
         if is_closed is not False:
             return is_closed
 
-        return super(AirtimeRecievedViewSet, self).update(request, pk=pk)
+        return super(CashRecievedViewSet, self).update(request, pk=pk)
 
     def partial_update(self, request, *args, **Kwargs):
         pk = Kwargs['pk']
@@ -451,7 +451,7 @@ class CashRecievedViewSet(viewsets.ModelViewSet):
 
         # call update but with partial
         Kwargs['partial'] = True
-        return super(AirtimeRecievedViewSet, self).update(
+        return super(CashRecievedViewSet, self).update(
             request,  *args, **Kwargs)
 
     def destroy(self, request, pk=None):
@@ -460,7 +460,7 @@ class CashRecievedViewSet(viewsets.ModelViewSet):
         if is_closed is not False:
             return is_closed
 
-        return super(AirtimeRecievedViewSet, self).destroy(request, pk=pk)
+        return super(CashRecievedViewSet, self).destroy(request, pk=pk)
 
 
 class TradeViewSet(viewsets.ModelViewSet):
