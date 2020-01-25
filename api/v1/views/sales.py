@@ -539,12 +539,12 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
             return Response("Sales rep does not exist.",
                             status=status.HTTP_400_BAD_REQUEST)
 
-        Yuan_to_naira = 0
+        yuan_to_naira = 0
         # calculate profit
         try:
-            Yuan_to_naira = Configuration.objects.get(key='Yuan_to_naira')
+            yuan_to_naira = Configuration.objects.get(key='yuan_to_naira')
         except Configuration.DoesNotExist:
-            return Response('Please add a value for config \'Yuan_to_naira\'')
+            return Response('Please add a value for config \'yuan_to_naira\'')
 
         start_cash = sales_rep.cash_balance
 
@@ -562,7 +562,7 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         balance = start_cash + total_cash_recieved - total_cash_used
 
         # create profit
-        income *= int(Yuan_to_naira.value)
+        income *= float(yuan_to_naira.value)
         profit = income - total_cash_used
 
         if trades.first() is not None:
