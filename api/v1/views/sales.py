@@ -2,6 +2,7 @@ from datetime import datetime
 from django.db.models import Sum
 from django.utils.timezone import now
 from django.db import transaction
+from django.db.models import F
 
 from rest_framework import status
 from rest_framework import viewsets
@@ -634,13 +635,23 @@ class ProfitViewSet(viewsets.ReadOnlyModelViewSet):
             else:
                 # get aggregate by year
                 date_aggregate = 'sales_date__year'
-
-            profits = qs.values(
-                    'product', date_aggregate).order_by(
-                        date_aggregate).annotate(total=Sum('amount'))
+            profits = qs.values(date_aggregate).order_by(
+                date_aggregate).annotate(
+                    total=Sum('amount'), product=F('product__name'))
         elif sales_date is not None:
-            profits = qs.values(
-                    'product', 'sales_date').order_by(
-                        'product').annotate(total=Sum('amount'))
+            profits = qs.values('sales_date__date').order_by(
+                        'product').annotate(
+                            total=Sum('amount'), product=F('product__name'))
 
+        if profits:
+            # add key, so that client can have a consitent value
+            date_key = [key for key in profits[0] if key not in [
+                'product', ['total']]][0]
+            updated_profits = []
+
+            for profit in profits:
+                profit.update({'key': profit[date_key]})
+                updated_profits.append(profit)
+
+            return Response(updated_profits)
         return Response(list(profits))
