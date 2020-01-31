@@ -55,7 +55,8 @@ from sales.models import (
 
 class ConfigurationViewSet(viewsets.ModelViewSet):
     """Manage configurations"""
-    queryset = Configuration.objects.filter(is_active=True).order_by('id')
+    queryset = Configuration.objects.filter(is_active=True).order_by(
+        '-create_date')
     serializer_class = ConfigurationSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('category', 'key', )
@@ -80,7 +81,7 @@ class ConfigurationViewSet(viewsets.ModelViewSet):
 
 class SalesRepViewSet(viewsets.ModelViewSet):
     """manage sales representatives"""
-    queryset = SalesRep.objects.filter(is_active=True).order_by('id')
+    queryset = SalesRep.objects.filter(is_active=True).order_by('-create_date')
     serializer_class = SalesRepSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('name', 'category',)
@@ -105,7 +106,7 @@ class SalesRepViewSet(viewsets.ModelViewSet):
 
 class ProductViewSet(viewsets.ModelViewSet):
     """manage product"""
-    queryset = Product.objects.filter(is_active=True).order_by('id')
+    queryset = Product.objects.filter(is_active=True).order_by('-create_date')
     serializer_class = ProductSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('name', 'category',)
@@ -130,7 +131,8 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 class DataSubscriptionViewSet(viewsets.ModelViewSet):
     """manage DataSubscription"""
-    queryset = DataSubscription.objects.filter(is_active=True).order_by('id')
+    queryset = DataSubscription.objects.filter(is_active=True).order_by(
+        '-create_date')
     # serializer_class = DataSubscriptionSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('network',)
@@ -143,7 +145,7 @@ class DataSubscriptionViewSet(viewsets.ModelViewSet):
 
 class DataPlanViewSet(viewsets.ModelViewSet):
     """manage Dataplan"""
-    queryset = DataPlan.objects.filter(is_active=True).order_by('id')
+    queryset = DataPlan.objects.filter(is_active=True).order_by('-create_date')
     # serializer_class = DataPlanSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('network', 'name',)
@@ -169,7 +171,7 @@ def is_closed_record(model, pk, action='update'):
 
 class SalesRepDataSubscriptionViewSet(viewsets.ModelViewSet):
     """manage sales rep DataSubscription"""
-    queryset = SalesRepDataSubscription.objects.order_by('id')
+    queryset = SalesRepDataSubscription.objects.order_by('-create_date')
     # serializer_class = SalesRepDataSubscriptionSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('sub', 'sales_rep', 'create_date', 'is_closed',)
@@ -212,7 +214,7 @@ class SalesRepDataSubscriptionViewSet(viewsets.ModelViewSet):
 
 class AirtimeRecievedViewSet(viewsets.ModelViewSet):
     """manage sales rep DataSubscription"""
-    queryset = AirtimeRecieved.objects.order_by('id')
+    queryset = AirtimeRecieved.objects.order_by('-create_date')
     serializer_class = AirtimeRecievedSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('sales_rep', 'amount', 'create_date', 'is_closed',)
@@ -253,7 +255,7 @@ class AirtimeRecievedViewSet(viewsets.ModelViewSet):
 
 class DataSalesViewSet(viewsets.ModelViewSet):
     """manage sales rep Data sales"""
-    queryset = DataSales.objects.order_by('id')
+    queryset = DataSales.objects.order_by('-create_date')
     # serializer_class = DataSalesSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = (
@@ -425,7 +427,7 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
 
 class CashRecievedViewSet(viewsets.ModelViewSet):
     """manage sales rep DataSubscription"""
-    queryset = CashRecieved.objects.order_by('id')
+    queryset = CashRecieved.objects.order_by('-create_date')
     # serializer_class = CashRecievedSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('sales_rep', 'amount', 'create_date', 'is_closed',)
@@ -466,7 +468,7 @@ class CashRecievedViewSet(viewsets.ModelViewSet):
 
 class TradeViewSet(viewsets.ModelViewSet):
     """manage sales rep giftcard sales"""
-    queryset = Trade.objects.order_by('id')
+    queryset = Trade.objects.order_by('-create_date')
     # serializer_class = TradeSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = (

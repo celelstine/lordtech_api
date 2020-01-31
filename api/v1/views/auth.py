@@ -20,7 +20,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     You can handle every authentication and user management on your account
     """
-    queryset = User.objects.filter(is_active=True)
+    queryset = User.objects.filter(is_active=True).order_by('-create_date')
     serializer_class = UserSerializer
     permission_classes = (UserViewSetPermission,)
 
