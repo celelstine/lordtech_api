@@ -15,6 +15,7 @@ class Migration(migrations.Migration):
             name='cost',
             field=models.PositiveIntegerField(blank=True, default=123444),
             preserve_default=False,
+
         ),
         migrations.AlterField(
             model_name='datasales',
