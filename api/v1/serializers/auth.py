@@ -11,14 +11,14 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             'id', 'username', 'email', 'first_name',
-            'last_name', 'role', 'is_admin'
+            'last_name', 'role', 'is_admin', 'is_superuser',
         )
         extra_kwargs = {
             'username': {
                 'allow_null': False, 'required': True, 'allow_blank': False
             },
         }
-        read_only_fields = ['role', 'is_admin']
+        read_only_fields = ['is_admin']
 
     is_admin = serializers.SerializerMethodField()
     role = serializers.SerializerMethodField()
