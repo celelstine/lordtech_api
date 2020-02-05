@@ -31,7 +31,7 @@ if os.getenv('HOST_ENV', 'Dev') != 'HEROKU':
 SECRET_KEY = os.getenv('SECRET_KEY', 'badguy')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', True)
+DEBUG = bool(int(os.getenv('DEBUG', '1')))
 
 AUTH_USER_MODEL = 'LtSales_auth.User'
 
