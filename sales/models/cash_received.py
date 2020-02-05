@@ -6,8 +6,8 @@ from utils.model_mixins import BaseAppModelMixin
 from .salesrep import SalesRep
 
 
-class CashRecieved(BaseAppModelMixin):
-    """class for cash recieved by sales rep"""
+class CashReceived(BaseAppModelMixin):
+    """class for cash Received by sales rep"""
 
     sales_rep = models.ForeignKey(
         SalesRep,
@@ -25,7 +25,7 @@ class CashRecieved(BaseAppModelMixin):
 
         # should not allow update when a record has been closed
         if self.create_date is not None:
-            obj = CashRecieved.objects.values('is_closed').get(
+            obj = CashReceived.objects.values('is_closed').get(
                 pk=self.pk)
             if obj['is_closed'] is True:
                 raise ValidationError('Can update a closed record')
@@ -33,12 +33,12 @@ class CashRecieved(BaseAppModelMixin):
     def save(self, *args, **kwargs):
         # ensure that the clean method is call on every save
         self.clean()
-        super(CashRecieved, self).save(*args, **kwargs)
+        super(CashReceived, self).save(*args, **kwargs)
 
     def __str__(self):
         """customize the string representation"""
         return "%s -  %s" % (self.amount, self.sales_rep)
 
     class Meta:
-        verbose_name = 'Cash Recieved'
-        verbose_name_plural = 'Cash Recieved'
+        verbose_name = 'Cash Received'
+        verbose_name_plural = 'Cash Received'

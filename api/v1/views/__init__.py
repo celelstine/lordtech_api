@@ -3,8 +3,8 @@ from .auth import (
 )
 
 from .sales import (
-    AirtimeRecievedViewSet,
-    CashRecievedViewSet,
+    AirtimeReceivedViewSet,
+    CashReceivedViewSet,
     ConfigurationViewSet,
     DataPlanViewSet,
     DataSalesViewSet,
@@ -22,9 +22,9 @@ from .webhooks import block_io_webhook
 
 
 __all__ = [
-    'AirtimeRecievedViewSet',
+    'AirtimeReceivedViewSet',
     'block_io_webhook',
-    'CashRecievedViewSet',
+    'CashReceivedViewSet',
     'ConfigurationViewSet',
     'DataPlanViewSet',
     'DataSalesViewSet',

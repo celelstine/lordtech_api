@@ -6,8 +6,8 @@ from utils.model_mixins import BaseAppModelMixin
 from .salesrep import SalesRep
 
 
-class AirtimeRecieved(BaseAppModelMixin):
-    """class for airtime recieved by sales rep"""
+class AirtimeReceived(BaseAppModelMixin):
+    """class for airtime Received by sales rep"""
 
     sales_rep = models.ForeignKey(
         SalesRep,
@@ -25,7 +25,7 @@ class AirtimeRecieved(BaseAppModelMixin):
 
         # should not allow update when a record has been closed
         if self.create_date is not None:
-            obj = AirtimeRecieved.objects.values('is_closed').get(
+            obj = AirtimeReceived.objects.values('is_closed').get(
                 pk=self.pk)
             if obj['is_closed'] is True:
                 raise ValidationError('Can update a closed record')
@@ -33,12 +33,12 @@ class AirtimeRecieved(BaseAppModelMixin):
     def save(self, *args, **kwargs):
         # ensure that the clean method is call on every save
         self.clean()
-        super(AirtimeRecieved, self).save(*args, **kwargs)
+        super(AirtimeReceived, self).save(*args, **kwargs)
 
     def __str__(self):
         """customize the string representation"""
         return "%s -  %s" % (self.amount, self.sales_rep)
 
     class Meta:
-        verbose_name = 'Airtime Recieved'
-        verbose_name_plural = 'Airtime Recieved'
+        verbose_name = 'Airtime Received'
+        verbose_name_plural = 'Airtime Received'

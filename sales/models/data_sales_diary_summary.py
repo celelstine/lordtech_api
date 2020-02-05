@@ -33,7 +33,7 @@ class DataSalesSummary(BaseAppModelMixin):
         null=False,
         blank=False
     )
-    total_airtime_recieved = models.IntegerField(
+    total_airtime_received = models.IntegerField(
         default=0,
         null=False,
         blank=False

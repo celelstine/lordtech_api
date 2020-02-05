@@ -1,8 +1,8 @@
 from django.contrib import admin
 
 from .models import (
-    AirtimeRecieved,
-    CashRecieved,
+    AirtimeReceived,
+    CashReceived,
     Configuration,
     DataPlan,
     DataSales,
@@ -78,8 +78,8 @@ class SalesRepDataSubscriptionAdmin(admin.ModelAdmin):
             request).order_by('-create_date')
 
 
-@admin.register(AirtimeRecieved)
-class AirtimeRecievedAdmin(admin.ModelAdmin):
+@admin.register(AirtimeReceived)
+class AirtimeReceivedAdmin(admin.ModelAdmin):
     fields = (
         'id', 'sales_rep', 'amount', 'is_closed',
         'create_date', 'modify_date')
@@ -88,7 +88,7 @@ class AirtimeRecievedAdmin(admin.ModelAdmin):
     search_fields = ['id', 'amount', 'is_closed']
 
     def get_queryset(self, request):
-        return super(AirtimeRecievedAdmin, self).get_queryset(
+        return super(AirtimeReceivedAdmin, self).get_queryset(
             request).order_by('-create_date')
 
 
@@ -110,7 +110,7 @@ class DataSalesAdmin(admin.ModelAdmin):
 class DataSalesSummaryAdmin(admin.ModelAdmin):
     fields = (
         'id', 'sales_date', 'sales_rep', 'Start_airtime', 'Start_data',
-        'total_airtime_recieved', 'total_direct_Sales', 'total_sub_made',
+        'total_airtime_received', 'total_direct_Sales', 'total_sub_made',
         'expected_airtime', 'actual_airtime', 'expected_data_balance',
         'actual_data_balance', 'total_data_shared', 'no_order_treated',
         'outstanding', 'is_closed', 'create_date', 'modify_date')
@@ -124,8 +124,8 @@ class DataSalesSummaryAdmin(admin.ModelAdmin):
             request).order_by('-sales_date')
 
 
-@admin.register(CashRecieved)
-class CashRecievedAdmin(admin.ModelAdmin):
+@admin.register(CashReceived)
+class CashReceivedAdmin(admin.ModelAdmin):
     fields = (
         'id', 'sales_rep', 'amount', 'is_closed',
         'create_date', 'modify_date')
@@ -134,7 +134,7 @@ class CashRecievedAdmin(admin.ModelAdmin):
     search_fields = ['id', 'amount', 'is_closed']
 
     def get_queryset(self, request):
-        return super(CashRecievedAdmin, self).get_queryset(
+        return super(CashReceivedAdmin, self).get_queryset(
             request).order_by('-create_date')
 
 
@@ -155,12 +155,12 @@ class TradeAdmin(admin.ModelAdmin):
 @admin.register(TradeSummary)
 class TradeSummaryAdmin(admin.ModelAdmin):
     fields = (
-        'id', 'sales_rep', 'total_cash_recieved', 'total_cash_used',
+        'id', 'sales_rep', 'total_cash_received', 'total_cash_used',
         'balance',  'is_closed', 'create_date', 'modify_date')
     list_display = fields
     readonly_fields = ('id', 'create_date', 'modify_date')
     search_fields = [
-        'id', 'sales_rep', 'total_cash_recieved', 'total_cash_used',
+        'id', 'sales_rep', 'total_cash_received', 'total_cash_used',
          'balance', 'is_closed', 'create_date']
 
     def get_queryset(self, request):

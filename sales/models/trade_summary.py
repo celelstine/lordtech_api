@@ -14,7 +14,7 @@ class TradeSummary(BaseAppModelMixin):
         on_delete=models.CASCADE,
         limit_choices_to={'category': SalesRep.GIFTCARD},
         related_name='trade_summaries')
-    total_cash_recieved = models.IntegerField(
+    total_cash_received = models.IntegerField(
         default=0,
         null=False,
         blank=False

@@ -14,10 +14,10 @@ from config.authentication import IsAdminOnlyPermission
 
 from api.v1.filters import ProfitFilter
 from api.v1.serializers import (
-    AirtimeRecievedSerializer,
-    AirtimeRecievedGetSerializer,
-    CashRecievedSerializer,
-    CashRecievedGetSerializer,
+    AirtimeReceivedSerializer,
+    AirtimeReceivedGetSerializer,
+    CashReceivedSerializer,
+    CashReceivedGetSerializer,
     ConfigurationSerializer,
     DataPlanSerializer,
     DataPlanGetSerializer,
@@ -37,8 +37,8 @@ from api.v1.serializers import (
 )
 
 from sales.models import (
-    AirtimeRecieved,
-    CashRecieved,
+    AirtimeReceived,
+    CashReceived,
     Configuration,
     DataPlan,
     DataSales,
@@ -212,45 +212,45 @@ class SalesRepDataSubscriptionViewSet(viewsets.ModelViewSet):
             request, pk=pk)
 
 
-class AirtimeRecievedViewSet(viewsets.ModelViewSet):
+class AirtimeReceivedViewSet(viewsets.ModelViewSet):
     """manage sales rep DataSubscription"""
-    queryset = AirtimeRecieved.objects.order_by('-create_date')
-    serializer_class = AirtimeRecievedSerializer
+    queryset = AirtimeReceived.objects.order_by('-create_date')
+    serializer_class = AirtimeReceivedSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('sales_rep', 'amount', 'create_date', 'is_closed',)
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
-            return AirtimeRecievedGetSerializer
-        return AirtimeRecievedSerializer
+            return AirtimeReceivedGetSerializer
+        return AirtimeReceivedSerializer
 
     def update(self, request, pk=None):
-        is_closed = is_closed_record(AirtimeRecieved, pk)
+        is_closed = is_closed_record(AirtimeReceived, pk)
 
         if is_closed is not False:
             return is_closed
 
-        return super(AirtimeRecievedViewSet, self).update(request, pk=pk)
+        return super(AirtimeReceivedViewSet, self).update(request, pk=pk)
 
     def partial_update(self, request, *args, **Kwargs):
         pk = Kwargs['pk']
-        is_closed = is_closed_record(AirtimeRecieved, pk)
+        is_closed = is_closed_record(AirtimeReceived, pk)
 
         if is_closed is not False:
             return is_closed
 
         # call update but with partial
         Kwargs['partial'] = True
-        return super(AirtimeRecievedViewSet, self).update(
+        return super(AirtimeReceivedViewSet, self).update(
             request,  *args, **Kwargs)
 
     def destroy(self, request, pk=None):
-        is_closed = is_closed_record(AirtimeRecieved, pk, 'delete')
+        is_closed = is_closed_record(AirtimeReceived, pk, 'delete')
 
         if is_closed is not False:
             return is_closed
 
-        return super(AirtimeRecievedViewSet, self).destroy(request, pk=pk)
+        return super(AirtimeReceivedViewSet, self).destroy(request, pk=pk)
 
 
 class DataSalesViewSet(viewsets.ModelViewSet):
@@ -304,7 +304,7 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = (
         'id', 'sales_rep', 'Start_airtime', 'sales_date',
-        'Start_data', 'total_airtime_recieved', 'total_direct_Sales',
+        'Start_data', 'total_airtime_received', 'total_direct_Sales',
         'total_sub_made', 'expected_airtime', 'actual_airtime',
         'expected_data_balance', 'no_order_treated', 'outstanding',
         'is_closed',)
@@ -341,8 +341,8 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         start_data = sales_rep.data_balance
         start_airtime = sales_rep.airtime_balance
 
-        # calculate total airime received; that airtime recieved that are not closed   # noqa
-        total_airtime_recieved = sales_rep.airtime_received.filter(
+        # calculate total airime received; that airtime Received that are not closed   # noqa
+        total_airtime_received = sales_rep.airtime_received.filter(
             is_closed=False).aggregate(Sum('amount'))['amount__sum'] or 0
 
         sales = sales_rep.sales.filter(is_closed=False)
@@ -372,7 +372,7 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         total_airtime_used = total_sub * data_sub.cost_per_sub
         total_mb_added = total_sub * data_sub.mb_per_sub
 
-        expected_airtime = start_airtime + total_airtime_recieved - total_airtime_used  # noqa
+        expected_airtime = start_airtime + total_airtime_received - total_airtime_used  # noqa
         outstanding = actual_airtime - expected_airtime - total_direct_sales
 
         expected_data_balance = start_data + total_mb_added - total_data_shared
@@ -385,15 +385,12 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
 
         profit = income - expenditure
 
-        if sales.count != 0:
-            Profit.objects.create(amount=profit, product=product)
-
         summary = {
             'sales_date': sales_date,
             'sales_rep_id': sales_rep_id,
             'Start_airtime': start_airtime,
             'Start_data': start_data,
-            'total_airtime_recieved': total_airtime_recieved,
+            'total_airtime_received': total_airtime_received,
             'total_direct_Sales': total_direct_sales,
             'total_sub_made': total_sub,
             'expected_airtime': expected_airtime,
@@ -418,52 +415,53 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
             sales_rep.airtime_received.filter(is_closed=False).update(is_closed=True)  # noqa
             sales_rep.sales.filter(is_closed=False).update(is_closed=True)
             sales_rep.subscriptions.filter(is_closed=False).update(is_closed=True)  # noqa
-            # TODO: create profit
+            if sales.count != 0:
+                Profit.objects.create(amount=profit, product=product)
             sales_summary = DataSalesSummary.objects.create(**summary)
 
             data = self.get_serializer_class()(sales_summary).data
             return Response(data, status=status.HTTP_201_CREATED)
 
 
-class CashRecievedViewSet(viewsets.ModelViewSet):
+class CashReceivedViewSet(viewsets.ModelViewSet):
     """manage sales rep DataSubscription"""
-    queryset = CashRecieved.objects.order_by('-create_date')
-    # serializer_class = CashRecievedSerializer
+    queryset = CashReceived.objects.order_by('-create_date')
+    # serializer_class = CashReceivedSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('sales_rep', 'amount', 'create_date', 'is_closed',)
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
-            return CashRecievedGetSerializer
-        return CashRecievedSerializer
+            return CashReceivedGetSerializer
+        return CashReceivedSerializer
 
     def update(self, request, pk=None):
-        is_closed = is_closed_record(CashRecieved, pk)
+        is_closed = is_closed_record(CashReceived, pk)
 
         if is_closed is not False:
             return is_closed
 
-        return super(CashRecievedViewSet, self).update(request, pk=pk)
+        return super(CashReceivedViewSet, self).update(request, pk=pk)
 
     def partial_update(self, request, *args, **Kwargs):
         pk = Kwargs['pk']
-        is_closed = is_closed_record(CashRecieved, pk)
+        is_closed = is_closed_record(CashReceived, pk)
 
         if is_closed is not False:
             return is_closed
 
         # call update but with partial
         Kwargs['partial'] = True
-        return super(CashRecievedViewSet, self).update(
+        return super(CashReceivedViewSet, self).update(
             request,  *args, **Kwargs)
 
     def destroy(self, request, pk=None):
-        is_closed = is_closed_record(CashRecieved, pk, 'delete')
+        is_closed = is_closed_record(CashReceived, pk, 'delete')
 
         if is_closed is not False:
             return is_closed
 
-        return super(CashRecievedViewSet, self).destroy(request, pk=pk)
+        return super(CashReceivedViewSet, self).destroy(request, pk=pk)
 
 
 class TradeViewSet(viewsets.ModelViewSet):
@@ -516,7 +514,7 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TradeSummarySerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = (
-        'id', 'total_cash_recieved', 'is_closed', 'total_cash_used',
+        'id', 'total_cash_received', 'is_closed', 'total_cash_used',
         'sales_rep', 'balance',)
 
     @action(methods=['post'], detail=False)
@@ -551,7 +549,7 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
 
         start_cash = sales_rep.cash_balance
 
-        total_cash_recieved = sales_rep.cash_received.filter(
+        total_cash_received = sales_rep.cash_received.filter(
             is_closed=False).aggregate(Sum('amount'))['amount__sum'] or 0
 
         trades = sales_rep.trades.filter(is_closed=False)
@@ -562,7 +560,7 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
             total_cash_used += trade.amount_paid
             income += trade.buying_rate * trade.amount
 
-        balance = start_cash + total_cash_recieved - total_cash_used
+        balance = start_cash + total_cash_received - total_cash_used
 
         # create profit
         income *= float(yuan_to_naira.value)
@@ -573,7 +571,7 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
 
         summary = {
             'sales_rep_id': sales_rep_id,
-            'total_cash_recieved': total_cash_recieved,
+            'total_cash_received': total_cash_received,
             'total_cash_used': total_cash_used,
             'balance': balance,
             'is_closed': True

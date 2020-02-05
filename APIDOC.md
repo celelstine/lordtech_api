@@ -497,7 +497,7 @@ amount: number required (quantity of the sub)
    - delete `only for records that are not closed`
 
 
-- #### Airtime Recieved by data rep `airtime-recieved/` `protected`
+- #### Airtime Received by data rep `airtime-Received/` `protected`
 `model fields:`
 ```
 sales_rep: string  required (sales rep  uuid)
@@ -731,7 +731,7 @@ total_mb: number
             "sales_date": "2019-12-09T13:43:26.720280Z",
             "Start_airtime": "0.00",
             "Start_data": "0.00",
-            "total_airtime_recieved": 80004,
+            "total_airtime_received": 80004,
             "total_direct_Sales": 0,
             "total_sub_made": 0,
             "expected_airtime": 80004,
@@ -769,7 +769,7 @@ total_mb: number
             "sales_date": "2019-12-09T13:43:26.720280Z",
             "Start_airtime": "0.00",
             "Start_data": "0.00",
-            "total_airtime_recieved": 80004,
+            "total_airtime_received": 80004,
             "total_direct_Sales": 0,
             "total_sub_made": 0,
             "expected_airtime": 80004,
@@ -796,7 +796,7 @@ total_mb: number
     ```
 
 
-- #### Cash Recieved `cash-recieved/` `protected`
+- #### Cash Received `cash-Received/` `protected`
 `model fields:`
 ```
 sales_rep: string (Gift card sales rep uuid)
@@ -988,7 +988,7 @@ amount_paid: auto generated (amount in Naira paid to customer)
 sales_rep: string  required (gift card sales rep  uuid)
 
 # auto generate fields
-total_cash_recieved: number
+total_cash_received: number
 total_cash_used: number
 balance: number
 ```
@@ -1009,7 +1009,7 @@ balance: number
             "id": "86bc3807-6518-4ce8-b2b1-8170f6b54201",
             "create_date": "2019-12-10T22:46:31.635974Z",
             "modify_date": "2019-12-10T22:46:31.635974Z",
-            "total_cash_recieved": 1313,
+            "total_cash_received": 1313,
             "total_cash_used": 16054,
             "balance": -14731,
             "is_closed": true,
@@ -1036,7 +1036,7 @@ balance: number
             "id": "86bc3807-6518-4ce8-b2b1-8170f6b54201",
             "create_date": "2019-12-10T22:46:31.635974Z",
             "modify_date": "2019-12-10T22:46:31.635974Z",
-            "total_cash_recieved": 1313,
+            "total_cash_received": 1313,
             "total_cash_used": 16054,
             "balance": -14731,
             "is_closed": true,

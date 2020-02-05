@@ -1,6 +1,6 @@
 
-from .airtime_recieved import AirtimeRecieved
-from .cash_recieved import CashRecieved
+from .airtime_received import AirtimeReceived
+from .cash_received import CashReceived
 from .configuration import Configuration
 from .dataplan import DataPlan
 from .data_sales import DataSales
@@ -14,8 +14,8 @@ from .trade import Trade
 from .trade_summary import TradeSummary
 
 __all__ = [
-    'AirtimeRecieved',
-    'CashRecieved',
+    'AirtimeReceived',
+    'CashReceived',
     'Configuration',
     'DataPlan',
     'DataSales',

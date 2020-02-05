@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
 from sales.models import (
-    AirtimeRecieved,
-    CashRecieved,
+    AirtimeReceived,
+    CashReceived,
     Configuration,
     DataPlan,
     DataSales,
@@ -77,16 +77,16 @@ class SalesRepDataSubscriptionGetSerializer(serializers.ModelSerializer):
         depth = 2
 
 
-class AirtimeRecievedSerializer(serializers.ModelSerializer):
+class AirtimeReceivedSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = AirtimeRecieved
+        model = AirtimeReceived
         fields = '__all__'
 
 
-class AirtimeRecievedGetSerializer(serializers.ModelSerializer):
+class AirtimeReceivedGetSerializer(serializers.ModelSerializer):
 
-    class Meta(AirtimeRecievedSerializer.Meta):
+    class Meta(AirtimeReceivedSerializer.Meta):
         depth = 1
 
 
@@ -111,16 +111,16 @@ class DataSalesSummarySerializer(serializers.ModelSerializer):
         depth = 1
 
 
-class CashRecievedSerializer(serializers.ModelSerializer):
+class CashReceivedSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = CashRecieved
+        model = CashReceived
         fields = '__all__'
 
 
-class CashRecievedGetSerializer(CashRecievedSerializer):
+class CashReceivedGetSerializer(CashReceivedSerializer):
 
-    class Meta(CashRecievedSerializer.Meta):
+    class Meta(CashReceivedSerializer.Meta):
         depth = 1
 
 
