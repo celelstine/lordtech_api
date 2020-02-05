@@ -33,6 +33,7 @@ class UserViewSet(viewsets.ModelViewSet):
         """
         username = request.data.get('username', None)
         role = request.data.get('role', None)
+        is_superuser = request.data.get('is_superuser', False)
 
         if username is None or role is None:
             return Response("Please a username and role",
@@ -48,7 +49,9 @@ class UserViewSet(viewsets.ModelViewSet):
         # create new user
         (u, created) = User.objects.get_or_create(
             username=username,
-            defaults={'email': username, 'is_staff': True, 'role': role}
+            defaults={
+                'email': username, 'is_staff': True, 'role': role,
+                'is_superuser': is_superuser}
         )
 
         if not created:
