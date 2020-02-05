@@ -497,7 +497,7 @@ amount: number required (quantity of the sub)
    - delete `only for records that are not closed`
 
 
-- #### Airtime Received by data rep `airtime-Received/` `protected`
+- #### Airtime Received by data rep `airtime-received/` `protected`
 `model fields:`
 ```
 sales_rep: string  required (sales rep  uuid)
@@ -796,7 +796,7 @@ total_mb: number
     ```
 
 
-- #### Cash Received `cash-Received/` `protected`
+- #### Cash Received `cash-received/` `protected`
 `model fields:`
 ```
 sales_rep: string (Gift card sales rep uuid)
