@@ -383,8 +383,6 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
 
         expenditure = (data_sub.cost_per_sub * total_data_shared) / data_sub.mb_per_sub   # noqa
 
-        profit = income - expenditure
-
         summary = {
             'sales_date': sales_date,
             'sales_rep_id': sales_rep_id,
@@ -416,6 +414,7 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
             sales_rep.sales.filter(is_closed=False).update(is_closed=True)
             sales_rep.subscriptions.filter(is_closed=False).update(is_closed=True)  # noqa
             if sales.count != 0:
+                profit = income - expenditure
                 Profit.objects.create(amount=profit, product=product)
             sales_summary = DataSalesSummary.objects.create(**summary)
 
@@ -552,22 +551,22 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         total_cash_received = sales_rep.cash_received.filter(
             is_closed=False).aggregate(Sum('amount'))['amount__sum'] or 0
 
-        trades = sales_rep.trades.filter(is_closed=False)
+        trades = sales_rep.trades.values('card_id', 'selling_rate').order_by(
+            'card_id').annotate(
+                total_amount=Sum('amount'),
+                total_amount_paid=Sum('amount_paid'))
         total_cash_used = 0
         income = 0
 
         for trade in trades:
-            total_cash_used += trade.amount_paid
-            income += trade.buying_rate * trade.amount
+            total_cash_used += trade.total_amount_paid
+            income += trade.selling_rate * trade.total_amount
 
         balance = start_cash + total_cash_received - total_cash_used
 
         # create profit
         income *= float(yuan_to_naira.value)
         profit = income - total_cash_used
-
-        if trades.first() is not None:
-            Profit.objects.create(amount=profit, product=trades.first().card)
 
         summary = {
             'sales_rep_id': sales_rep_id,
@@ -587,7 +586,11 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
             sales_rep.save()
             sales_rep.cash_received.filter(is_closed=False).update(is_closed=True)  # noqa
             sales_rep.trades.filter(is_closed=False).update(is_closed=True)
-            # TODO: create profit
+            # create profit
+            for trade in trades:
+                total_cash_received = trade.selling_rate * trade.total_amount
+                profit = total_cash_received - trade.total_amount_paid
+                Profit.objects.create(amount=profit, product_id=trade.card_id)
             trade_summary = TradeSummary.objects.create(**summary)
 
             data = self.get_serializer_class()(trade_summary).data
