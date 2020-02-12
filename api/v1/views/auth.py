@@ -33,10 +33,11 @@ class UserViewSet(viewsets.ModelViewSet):
         """
         username = request.data.get('username', None)
         role = request.data.get('role', None)
+        password = request.data.get('password', None)
         is_superuser = request.data.get('is_superuser', False)
 
-        if username is None or role is None:
-            return Response("Please a username and role",
+        if username is None or role is None or password is None:
+            return Response("Please a username, password and role",
                             status=status.HTTP_400_BAD_REQUEST)
 
         # validate the role
@@ -58,7 +59,7 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response('User with username: %s already exist' % username,
                             status=status.HTTP_400_BAD_REQUEST)
         # generate random password
-        password = User.objects.make_random_password()
+        # password = User.objects.make_random_password()
         u.set_password(password)
         u.save()
 
