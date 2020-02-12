@@ -22,9 +22,9 @@ class SalesRep(BaseAppModelMixin):
         null=False,
     )
     is_active = models.BooleanField(default=True)
-    cash_balance = models.IntegerField(default=0)
-    airtime_balance = models.IntegerField(default=0)
-    data_balance = models.IntegerField(default=0)
+    cash_balance = models.FloatField(default=0)
+    airtime_balance = models.FloatField(default=0)
+    data_balance = models.FloatField(default=0)
 
     class Meta:
         verbose_name = 'Sales Rep'

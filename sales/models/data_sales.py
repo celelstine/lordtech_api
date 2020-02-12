@@ -21,8 +21,8 @@ class DataSales(BaseAppModelMixin):
         limit_choices_to={'category': SalesRep.DATA},
         related_name='sales')
     amount = models.PositiveIntegerField(null=False, blank=False)
-    cost = models.PositiveIntegerField(null=False, blank=True)
-    total_mb = models.PositiveIntegerField(null=False, blank=True)
+    cost = models.FloatField(null=False, blank=True)
+    total_mb = models.FloatField(null=False, blank=True)
     is_direct_sales = models.BooleanField(default=False)
     is_closed = models.BooleanField(default=False)
 

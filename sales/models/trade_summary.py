@@ -14,18 +14,18 @@ class TradeSummary(BaseAppModelMixin):
         on_delete=models.CASCADE,
         limit_choices_to={'category': SalesRep.GIFTCARD},
         related_name='trade_summaries')
-    total_cash_received = models.IntegerField(
-        default=0,
+    total_cash_received = models.FloatField(
+        default=0.0,
         null=False,
         blank=False
     )
-    total_cash_used = models.PositiveIntegerField(
-        default=0,
+    total_cash_used = models.FloatField(
+        default=0.0,
         null=False,
         blank=False
     )
-    balance = models.IntegerField(
-        default=0,
+    balance = models.FloatField(
+        default=0.0,
         null=False,
         blank=False
     )

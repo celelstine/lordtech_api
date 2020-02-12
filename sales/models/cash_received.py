@@ -14,7 +14,7 @@ class CashReceived(BaseAppModelMixin):
         on_delete=models.CASCADE,
         limit_choices_to={'category': SalesRep.GIFTCARD},
         related_name='cash_received')
-    amount = models.PositiveIntegerField(null=False, blank=False)
+    amount = models.FloatField(null=False, blank=False)
     is_closed = models.BooleanField(default=False)
 
     def clean(self):

@@ -13,8 +13,8 @@ class DataSubscription(BaseAppModelMixin):
         Product,
         on_delete=models.CASCADE,
         limit_choices_to={'category': Product.DATA})
-    mb_per_sub = models.PositiveIntegerField(null=False, blank=False)
-    cost_per_sub = models.PositiveIntegerField(null=False, blank=False)
+    mb_per_sub = models.FloatField(null=False, blank=False)
+    cost_per_sub = models.FloatField(null=False, blank=False)
     is_active = models.BooleanField(default=True)
 
     def clean(self):

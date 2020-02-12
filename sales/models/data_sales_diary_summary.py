@@ -33,12 +33,12 @@ class DataSalesSummary(BaseAppModelMixin):
         null=False,
         blank=False
     )
-    total_airtime_received = models.IntegerField(
+    total_airtime_received = models.FloatField(
         default=0,
         null=False,
         blank=False
     )
-    total_direct_Sales = models.IntegerField(
+    total_direct_Sales = models.FloatField(
         default=0,
         null=False,
         blank=False
@@ -48,27 +48,27 @@ class DataSalesSummary(BaseAppModelMixin):
         null=False,
         blank=False
     )
-    expected_airtime = models.IntegerField(
+    expected_airtime = models.FloatField(
         default=0,
         null=False,
         blank=False
     )
-    actual_airtime = models.IntegerField(
+    actual_airtime = models.FloatField(
         default=0,
         null=False,
         blank=False
     )
-    expected_data_balance = models.IntegerField(
+    expected_data_balance = models.FloatField(
         default=0,
         null=False,
         blank=False
     )
-    actual_data_balance = models.IntegerField(
+    actual_data_balance = models.FloatField(
         default=0,
         null=False,
         blank=False
     )
-    total_data_shared = models.PositiveIntegerField(
+    total_data_shared = models.FloatField(
         null=False,
         blank=False
     )
@@ -76,8 +76,8 @@ class DataSalesSummary(BaseAppModelMixin):
         null=False,
         blank=False
     )
-    outstanding = models.IntegerField(
-        default=0,
+    outstanding = models.FloatField(
+        default=0.0,
         null=False,
         blank=False
     )

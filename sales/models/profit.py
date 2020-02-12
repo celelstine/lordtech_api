@@ -13,7 +13,7 @@ class Profit(BaseAppModelMixin):
         Product,
         on_delete=models.CASCADE,
         related_name='profits')
-    amount = models.IntegerField(null=False, blank=False)
+    amount = models.FloatField(null=False, blank=False)
     sales_date = models.DateTimeField(
         null=False,
         blank=False,

@@ -23,10 +23,10 @@ class Trade(BaseAppModelMixin):
         related_name='trades')
     selling_rate = models.PositiveIntegerField('Selling rate (Yuan)',
                                                blank=False, null=False)
-    buying_rate = models.PositiveIntegerField('Buying rate (Naira)',
-                                              blank=False, null=False)
+    buying_rate = models.FloatField('Buying rate (Naira)',
+                                    blank=False, null=False)
     amount = models.PositiveIntegerField(null=False, blank=False)
-    amount_paid = models.PositiveIntegerField(null=True, blank=True)
+    amount_paid = models.FloatField(null=True, blank=True)
     is_closed = models.BooleanField(default=False)
 
     def clean(self):
