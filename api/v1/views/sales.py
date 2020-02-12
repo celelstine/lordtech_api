@@ -318,14 +318,13 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         sales_rep_id = request.data.get('sales_rep', None)
         actual_airtime = request.data.get('actual_airtime', None)
         actual_data_balance = request.data.get('actual_data_balance', None)
-        no_order_treated = request.data.get('no_order_treated', None)
+        # no_order_treated = request.data.get('no_order_treated', None)
         sales_date = request.data.get('sales_date', now())
         create = request.data.get('create', False)
 
-        if sales_rep_id is None or actual_airtime is None or actual_data_balance is None or no_order_treated is None:  # noqa
+        if sales_rep_id is None or actual_airtime is None or actual_data_balance is None:  # noqa
             return Response("Please specfic values for: sales rep,"
-                            " actual_airtime, actual_data_balance "
-                            "and no_order_treated",
+                            " actual_airtime and actual_data_balance",
                             status=status.HTTP_400_BAD_REQUEST)
         # get the sales rep and ensure that she is a data sales rep
         try:
@@ -349,10 +348,11 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         total_direct_sales = 0
         total_data_shared = 0
         income = 0
-
+        no_order_treated = 0
         for s in sales:
             if s.is_direct_sales is True:
                 total_direct_sales += s.cost
+            no_order_treated += sales.amount
             total_data_shared += s.total_mb
             income += s.cost
 
@@ -373,12 +373,32 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         total_mb_added = total_sub * data_sub.mb_per_sub
 
         expected_airtime = start_airtime + total_airtime_received - total_airtime_used  # noqa
-        outstanding = actual_airtime - expected_airtime - total_direct_sales
+        outstanding = expected_airtime - actual_airtime + total_direct_sales
 
         expected_data_balance = start_data + total_mb_added - total_data_shared
         outstanding_data_balance = actual_data_balance - expected_data_balance
 
-        outstanding_data_cash = (data_sub.cost_per_sub * outstanding_data_balance) / data_sub.mb_per_sub  # noqa
+        deducting_plan = 0
+
+        if outstanding_data_balance > 500:
+            deducting_plan = product.dataplan_set.filter(
+                mb__gte=1000).order_by('mb').values('cost', 'mb').first()
+        else:
+            deducting_plan = product.dataplan_set.order_by('mb').values(
+                'cost', 'mb').first()
+
+        if not deducting_plan:
+            return Response("Could not find a plan for %s"
+                            " to convert outstanding data $d "
+                            "to cash." % (product, outstanding_data_balance),
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        # the system wants to upgrade the value to the lowest value
+        # so 750mb becomes 1gb
+        if outstanding_data_balance < deducting_plan.get('mb'):
+            outstanding_data_balance = deducting_plan.get('mb')
+
+        outstanding_data_cash = (outstanding_data_balance * deducting_plan.get('cost')) / deducting_plan.get('mb')  # noqa
         outstanding += outstanding_data_cash
 
         expenditure = (data_sub.cost_per_sub * total_data_shared) / data_sub.mb_per_sub   # noqa
