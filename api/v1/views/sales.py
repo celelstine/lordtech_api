@@ -505,14 +505,15 @@ class TradeViewSet(viewsets.ModelViewSet):
             total_amount_received = 0
             total_amount_paid = 0
 
-            for t in trades:
-                total_amount_received += (t.get('amount') * t.get('selling_rate'))  # noqa
-                total_amount_paid += t.get('amount_paid')
+            if len(trades):
+                for t in trades:
+                    total_amount_received += (t.get('amount') * t.get('selling_rate'))  # noqa
+                    total_amount_paid += t.get('amount_paid')
 
-            res.data['aggregate'] = {
-                'total_amount_received': total_amount_received,
-                'total_amount_paid': total_amount_paid
-            }
+                res.data['aggregate'] = {
+                    'total_amount_received': total_amount_received,
+                    'total_amount_paid': total_amount_paid
+                }
 
         return res
 
