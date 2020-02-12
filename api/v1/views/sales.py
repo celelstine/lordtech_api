@@ -1,8 +1,7 @@
 from datetime import datetime
-from django.db.models import Sum
+from django.db.models import F, Sum
 from django.utils.timezone import now
 from django.db import transaction
-from django.db.models import F
 
 from rest_framework import status
 from rest_framework import viewsets
@@ -12,7 +11,11 @@ from django_filters import rest_framework as filters
 
 from config.authentication import IsAdminOnlyPermission
 
-from api.v1.filters import ProfitFilter
+from api.v1.filters import (
+    ProfitFilter,
+    TradeFilter
+)
+
 from api.v1.serializers import (
     AirtimeReceivedSerializer,
     AirtimeReceivedGetSerializer,
@@ -488,8 +491,30 @@ class TradeViewSet(viewsets.ModelViewSet):
     queryset = Trade.objects.order_by('-create_date')
     # serializer_class = TradeSerializer
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = (
-        'sales_rep', 'amount', 'create_date', 'is_closed', 'group', 'card',)
+    filter_class = TradeFilter
+
+    def list(self, request):
+        res = super(TradeViewSet, self).list(request)
+        params = request.query_params
+
+        if params != {}:
+            # get aggregate for the request only when we filter
+            trades = self.filter_queryset(self.get_queryset()).values(
+                'amount_paid', 'selling_rate', 'amount')
+
+            total_amount_received = 0
+            total_amount_paid = 0
+
+            for t in trades:
+                total_amount_received += (t.get('amount') * t.get('selling_rate'))  # noqa
+                total_amount_paid += t.get('amount_paid')
+
+            res.data['aggregate'] = {
+                'total_amount_received': total_amount_received,
+                'total_amount_paid': total_amount_paid
+            }
+
+        return res
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
