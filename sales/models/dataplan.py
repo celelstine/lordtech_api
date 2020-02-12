@@ -14,8 +14,8 @@ class DataPlan(BaseAppModelMixin):
         on_delete=models.CASCADE,
         limit_choices_to={'category': Product.DATA})
     name = models.CharField(max_length=50, blank=False, null=False)
-    mb = models.PositiveIntegerField(null=False, blank=False)
-    cost = models.PositiveIntegerField(null=False, blank=False)
+    mb = models.FloatField(null=False, blank=False)
+    cost = models.FloatField(null=False, blank=False)
     is_active = models.BooleanField(default=True)
 
     def clean(self):
