@@ -5,6 +5,7 @@ from utils.model_mixins import BaseAppModelMixin
 
 from .salesrep import SalesRep
 from .product import Product
+from .trade_group import TradeGroup
 
 
 class Trade(BaseAppModelMixin):
@@ -15,7 +16,11 @@ class Trade(BaseAppModelMixin):
         on_delete=models.CASCADE,
         limit_choices_to={'category': SalesRep.GIFTCARD},
         related_name='trades')
-    group = models.CharField(blank=True, null=True, max_length=50)
+    trade_group = models.ForeignKey(
+        TradeGroup,
+        blank=True, null=True,
+        on_delete=models.CASCADE,
+        related_name='trades')
     card = models.ForeignKey(
         Product,
         on_delete=models.CASCADE,

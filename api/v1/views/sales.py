@@ -590,31 +590,45 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         yuan_to_naira = 0
         # calculate profit
         try:
-            yuan_to_naira = Configuration.objects.get(key='yuan_to_naira')
+            yuan_to_naira = Configuration.objects.get(key='yuan_to_naira').value  # noqa
         except Configuration.DoesNotExist:
-            return Response('Please add a value for config \'yuan_to_naira\'')
+            return Response('Please add a value for config \'yuan_to_naira\'',
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        if yuan_to_naira < 1:
+            return Response(f'Invalid value for \'yuan_to_naira\': {yuan_to_naira}',   # noqa
+                            status=status.HTTP_400_BAD_REQUEST)
 
         start_cash = sales_rep.cash_balance
 
         total_cash_received = sales_rep.cash_received.filter(
             is_closed=False).aggregate(Sum('amount'))['amount__sum'] or 0
 
-        trades = sales_rep.trades.values('card_id', 'selling_rate').order_by(
-            'card_id').annotate(
-                total_amount=Sum('amount'),
-                total_amount_paid=Sum('amount_paid'))
+        trades = sales_rep.trades.filter(is_closed=False)
+        groups = {}
+        cards = {}
         total_cash_used = 0
-        income = 0
 
         for trade in trades:
             total_cash_used += trade.total_amount_paid
-            income += trade.selling_rate * trade.total_amount
+
+            sales_cost = trade.selling_rate * trade.total_amount
+
+            group = trade.trade_group.name
+            if group in groups:
+                groups[group] += sales_cost
+            else:
+                groups[group] = sales_cost
+
+            card = trade.card.id
+            sales_cost_naira = sales_cost * yuan_to_naira if trade.trade_group.selling_currency == TradeGroup.YUAN else sales_cost  # noqa
+            profit = sales_cost_naira - trade.total_amount_paid
+            if card in cards:
+                cards[card] += profit
+            else:
+                cards[card] = profit
 
         balance = start_cash + total_cash_received - total_cash_used
-
-        # create profit
-        income *= float(yuan_to_naira.value)
-        profit = income - total_cash_used
 
         summary = {
             'sales_rep_id': sales_rep_id,
@@ -634,11 +648,18 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
             sales_rep.save()
             sales_rep.cash_received.filter(is_closed=False).update(is_closed=True)  # noqa
             sales_rep.trades.filter(is_closed=False).update(is_closed=True)
+
             # create profit
-            for trade in trades:
-                total_cash_received = trade.selling_rate * trade.total_amount
-                profit = total_cash_received - trade.total_amount_paid
-                Profit.objects.create(amount=profit, product_id=trade.card_id)
+            for card, profit in cards.items():
+                Profit.objects.create(amount=profit, product_id=card)
+
+            # update group balance
+            group_objs = TradeGroup.filter(name__in=groups.keys())
+
+            for group in group_objs:
+                group.balance += groups[group.name]
+                group.save()
+
             trade_summary = TradeSummary.objects.create(**summary)
 
             data = self.get_serializer_class()(trade_summary).data
@@ -715,3 +736,25 @@ class TradeGroupViewSet(viewsets.ModelViewSet):
     serializer_class = TradeGroupSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('name', 'selling_currency', 'is_active')
+
+    @action(methods=['post'], detail=True)
+    def withdraw(self, request, pk=None):
+        """withdraw cash from trade group"""
+        amount = int(request.data.get('amount', 0))
+        if amount < 1:
+            return Response("Invalid amount, should be more than zero",
+                            status=status.HTTP_400_BAD_REQUEST)
+        try:
+            group = TradeGroup.objects.get(pk=pk)
+            balance = group.balance - amount
+            if balance < 0:
+                return Response(f"Insufficient balance, balance is {group.balance}",  # noqa
+                                status=status.HTTP_400_BAD_REQUEST)
+            group.balance = balance
+            group.save()
+            # fetch lastest
+            group = TradeGroup.objects.get(pk=pk)
+            return Response(TradeGroupSerializer(group).data)
+        except TradeGroup.DoesNotExist:
+            return Response("Trade group does not exist",
+                            status=status.HTTP_404_NOT_FOUND)
