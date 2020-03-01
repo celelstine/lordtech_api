@@ -27,6 +27,8 @@ class Trade(BaseAppModelMixin):
                                     blank=False, null=False)
     amount = models.PositiveIntegerField(null=False, blank=False)
     amount_paid = models.FloatField(null=True, blank=True)
+    order_id = models.CharField(
+        blank=True, null=True, max_length=20, unique=True)
     is_closed = models.BooleanField(default=False)
 
     def clean(self):
