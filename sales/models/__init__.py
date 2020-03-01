@@ -11,6 +11,7 @@ from .profit import Profit
 from .salesrep import SalesRep
 from .salesrep_data_subscription import SalesRepDataSubscription
 from .trade import Trade
+from .trade_group import TradeGroup
 from .trade_summary import TradeSummary
 
 __all__ = [
@@ -26,5 +27,6 @@ __all__ = [
     'SalesRep',
     'SalesRepDataSubscription',
     'Trade',
+    'TradeGroup',
     'TradeSummary'
 ]

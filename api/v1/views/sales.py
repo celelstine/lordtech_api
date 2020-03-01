@@ -36,6 +36,7 @@ from api.v1.serializers import (
     SalesRepDataSubscriptionGetSerializer,
     TradeSerializer,
     TradeGetSerializer,
+    TradeGroupSerializer,
     TradeSummarySerializer
 )
 
@@ -52,6 +53,7 @@ from sales.models import (
     SalesRep,
     SalesRepDataSubscription,
     Trade,
+    TradeGroup,
     TradeSummary
 )
 
@@ -704,3 +706,12 @@ class ProfitViewSet(viewsets.ReadOnlyModelViewSet):
 
             return Response(updated_profits)
         return Response(list(profits))
+
+
+class TradeGroupViewSet(viewsets.ModelViewSet):
+    """manage TradeGroup"""
+    queryset = TradeGroup.objects.filter(is_active=True).order_by(
+        '-create_date')
+    serializer_class = TradeGroupSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('name', 'selling_currency', 'is_active')

@@ -13,6 +13,7 @@ from sales.models import (
     SalesRep,
     SalesRepDataSubscription,
     Trade,
+    TradeGroup,
     TradeSummary
 )
 
@@ -151,3 +152,10 @@ class ProfitSerializer(serializers.ModelSerializer):
         model = Profit
         fields = '__all__'
         depth = 1
+
+
+class TradeGroupSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TradeGroup
+        fields = '__all__'
