@@ -877,7 +877,7 @@ amount: positive integer required
 `model fields:`
 ```
 sales_rep: string (Gift card sales rep uuid)
-group: string <group where card was loaded> required
+sales_group: string <group where card was loaded> required
 card: string (uuid from giftcard product)
 selling_rate: positive decimal (the selling rate in Yaun)
 buying_rate: positive decimal (the buying rate in Naira)
@@ -1054,3 +1054,81 @@ balance: number
         }
 
     ```
+
+
+- #### trade group `trade-group/` `protected`
+`model fields:`
+```
+name: string  required 
+balance: number required
+selling_currency: string required (either naira or yuan)
+```
+  - **List ['']**
+    ```
+    request Query String GET
+    {
+        balance: number
+        name: string 
+        create_Date: datetime string
+        selling_currency: string
+        is_closed: boolean
+    }
+
+    response 200
+    {
+        "count": 3,
+        "next": null,
+        "previous": null,
+        "results": [
+            {
+                "id": "ea04e25c-bafb-48cc-a4af-84180d928aff",
+                "create_date": "2020-03-01T11:02:36.803714Z",
+                "modify_date": "2020-03-01T13:29:28.253306Z",
+                "name": "lt1",
+                "balance": 96,
+                "selling_currency": "naira",
+                "is_active": true
+            }
+            ...
+        ]
+    }
+
+    ```
+- **Create ['']**
+    ```
+    request Request Payload POST
+    validation; same as model
+
+    response 201
+        {
+            "id": "ea04e25c-bafb-48cc-a4af-84180d928aff",
+            "create_date": "2020-03-01T11:02:36.803714Z",
+            "modify_date": "2020-03-01T13:29:28.253306Z",
+            "name": "lt1",
+            "balance": 96,
+            "selling_currency": "naira",
+            "is_active": true
+        }
+
+    ```
+
+- **Details Route ['/{id}']** 
+   - patch 
+   - put
+   - get
+   - delete
+
+- **withdraw Route ['/{id}/withdraw/']**
+    request payload
+    amount: int required
+
+    response 200:
+        {
+            "id": "ea04e25c-bafb-48cc-a4af-84180d928aff",
+            "create_date": "2020-03-01T11:02:36.803714Z",
+            "modify_date": "2020-03-01T13:29:28.253306Z",
+            "name": "lt1",
+            "balance": 96,
+            "selling_currency": "naira",
+            "is_active": true
+        }
