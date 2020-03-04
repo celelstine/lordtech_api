@@ -877,7 +877,7 @@ amount: positive integer required
 `model fields:`
 ```
 sales_rep: string (Gift card sales rep uuid)
-sales_group: string <group where card was loaded> required
+trade_group: uuid <group where card was loaded> required
 card: string (uuid from giftcard product)
 selling_rate: positive decimal (the selling rate in Yaun)
 buying_rate: positive decimal (the buying rate in Naira)
@@ -891,7 +891,7 @@ amount_paid: auto generated (amount in Naira paid to customer)
         sales_rep: string <data sales rep uuid>,
         amount: number.
         create_date,
-        group,
+        trade_group: uuid <trade_group>,
         card: uuid for the giftcard product
     }
 
@@ -901,36 +901,45 @@ amount_paid: auto generated (amount in Naira paid to customer)
         "next": null,
         "previous": null,
         "results": [
-        {
-            "id": "39cbf6a6-c450-45a1-b952-546a3d08bf5c",
-            "create_date": "2019-12-10T21:57:15.123295Z",
-            "modify_date": "2019-12-10T21:57:15.123295Z",
-            "group": "g[1",
-            "selling_rate": 5,
-            "buying_rate": 9,
-            "amount": 6,
-            "amount_paid": 54,
-            "is_closed": true,
-            "sales_rep": {
-                "id": "f8ada025-4776-40af-984d-e8f71c669e3e",
-                "create_date": "2019-12-10T21:17:37.528646Z",
-                "modify_date": "2020-01-04T15:23:27.121695Z",
-                "name": "me",
-                "category": "gc",
-                "is_active": true,
-                "cash_balance": -14731,
-                "airtime_balance": 0,
-                "data_balance": 0
-            },
-            "card": {
-                "id": "94813d97-ecf8-4b69-b34c-c44fbedbffdd",
-                "create_date": "2019-12-10T21:47:44.612727Z",
-                "modify_date": "2019-12-10T21:47:44.612727Z",
-                "name": "US itunes",
-                "category": "gc",
-                "is_active": true
-            }
-        },
+                {
+                    "id": "beac9536-9662-47e7-98f0-8979938e07ca",
+                    "create_date": "2020-02-12T17:17:57.793799Z",
+                    "modify_date": "2020-03-04T12:39:12.613784Z",
+                    "selling_rate": 5,
+                    "buying_rate": 7.0,
+                    "amount": 7,
+                    "amount_paid": 49.0,
+                    "order_id": null,
+                    "is_closed": false,
+                    "sales_rep": {
+                        "id": "f8ada025-4776-40af-984d-e8f71c669e3e",
+                        "create_date": "2019-12-10T21:17:37.528646Z",
+                        "modify_date": "2020-02-12T16:18:24.630763Z",
+                        "name": "me",
+                        "category": "gc",
+                        "is_active": true,
+                        "cash_balance": -14730.0,
+                        "airtime_balance": 0.0,
+                        "data_balance": 0.0
+                    },
+                    "trade_group": {
+                        "id": "ea04e25c-bafb-48cc-a4af-84180d928aff",
+                        "create_date": "2020-03-01T11:02:36.803714Z",
+                        "modify_date": "2020-03-01T13:29:28.253306Z",
+                        "name": "lt1",
+                        "balance": 96,
+                        "selling_currency": "naira",
+                        "is_active": true
+                    },
+                    "card": {
+                        "id": "94813d97-ecf8-4b69-b34c-c44fbedbffdd",
+                        "create_date": "2019-12-10T21:47:44.612727Z",
+                        "modify_date": "2019-12-10T21:47:44.612727Z",
+                        "name": "US itunes",
+                        "category": "gc",
+                        "is_active": true
+                    }
+                }
             ...
         ]
     }
@@ -952,25 +961,7 @@ amount_paid: auto generated (amount in Naira paid to customer)
             "amount": 6,
             "amount_paid": 54,
             "is_closed": true,
-            "sales_rep": {
-                "id": "f8ada025-4776-40af-984d-e8f71c669e3e",
-                "create_date": "2019-12-10T21:17:37.528646Z",
-                "modify_date": "2020-01-04T15:23:27.121695Z",
-                "name": "me",
-                "category": "gc",
-                "is_active": true,
-                "cash_balance": -14731,
-                "airtime_balance": 0,
-                "data_balance": 0
-            },
-            "card": {
-                "id": "94813d97-ecf8-4b69-b34c-c44fbedbffdd",
-                "create_date": "2019-12-10T21:47:44.612727Z",
-                "modify_date": "2019-12-10T21:47:44.612727Z",
-                "name": "US itunes",
-                "category": "gc",
-                "is_active": true
-            }
+            "trade_group": "ea04e25c-bafb-48cc-a4af-84180d928aff"
         },
 
     ```
