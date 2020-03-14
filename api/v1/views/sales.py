@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.db.models import F, Sum
 from django.utils.timezone import now
-from django.db import transaction
+from django.db import transaction, IntegrityError
 
 from rest_framework import status
 from rest_framework import viewsets
@@ -551,6 +551,83 @@ class TradeViewSet(viewsets.ModelViewSet):
             return is_closed
 
         return super(TradeViewSet, self).destroy(request, pk=pk)
+
+    @action(methods=['post'], detail=False)
+    def bulk_create(self, request):
+        """route to create a list of trade"""
+        # this should be a list of trade data
+        trades = request.data
+        if type(trades) != list:
+            return Response("Request payload must be a list of dictionary",
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = self.get_serializer_class()(data=trades, many=True)
+        if not serializer.is_valid():
+            payload = {
+                'message': 'Data is invalid',
+                'errors': serializer.errors
+            }
+            return Response(payload, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            trades = serializer.save()
+            payload = TradeGetSerializer(trades, many=True)
+            return Response(payload.data, status=status.HTTP_201_CREATED)
+        except IntegrityError:
+            return Response("Invalid data, duplicate values for unique fields"
+                            " such as order_id.",
+                            status=status.HTTP_400_BAD_REQUEST)
+        except Exception:
+            return Response('Server error, contact admin',
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(methods=['post'], detail=False)
+    def bulk_update(self, request):
+        """route to update a list of trade"""
+        # this should be a list of trade data
+        trades = request.data
+        if type(trades) != list:
+            return Response("Request payload must be a list of dictionary",
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        trade_objs = {str(t['id']): t for t in trades}
+        objects = Trade.objects.filter(id__in=trade_objs.keys())
+
+        # handle each object individually
+        try:
+            for obj in objects:
+                trade = trade_objs[str(obj.id)]
+                serializer = TradeSerializer(obj, data=trade,  partial=True)
+                if obj.is_closed:
+                    return Response("Some records are closed and can not be altered",  # noqa
+                                    status=status.HTTP_400_BAD_REQUEST)
+                if not serializer.is_valid():
+                    payload = {
+                        'message': 'Data is invalid',
+                        'errors': serializer.errors
+                    }
+                    return Response(payload,
+                                    status=status.HTTP_400_BAD_REQUEST)
+
+                obj.sales_rep_id = trade['sales_rep']
+                obj.trade_group_id = trade['trade_group']
+                obj.card_id = trade['card']
+                obj.selling_rate = trade['selling_rate']
+                obj.buying_rate = trade['buying_rate']
+                obj.amount = trade['amount']
+                obj.order_id = trade['order_id']
+                obj.save()
+        except IntegrityError:
+            return Response("Invalid data, duplicate values for unique fields"
+                            " such as order_id.",
+                            status=status.HTTP_400_BAD_REQUEST)
+        except Exception:
+            return Response('Server error, contact admin',
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        trades = Trade.objects.filter(id__in=trade_objs.keys())
+        payload = TradeGetSerializer(trades, many=True)
+        return Response(payload.data, status=status.HTTP_200_OK)
 
 
 class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):

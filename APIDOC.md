@@ -972,6 +972,11 @@ amount_paid: auto generated (amount in Naira paid to customer)
    - get
    - delete
 
+- **Extra Routes**
+    - bulk_insert: /trade/bulk_insert
+        payload: [<trade>]
+    - bulk_update: /trade/bulk_update
+        payload: [<trade>]
 
 - #### Trade summary `trade-summary/` `protected`
 `model fields:`
