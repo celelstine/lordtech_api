@@ -973,7 +973,7 @@ amount_paid: auto generated (amount in Naira paid to customer)
    - delete
 
 - **Extra Routes**
-    - bulk_insert: /trade/bulk_insert
+    - bulk_create: /trade/bulk_create
         payload: [<trade>]
     - bulk_update: /trade/bulk_update
         payload: [<trade>]
