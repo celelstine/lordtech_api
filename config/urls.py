@@ -16,16 +16,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+from django.conf import settings
+from django.conf.urls.static import static
+
+
+urlpatterns = [
+    path('api/', include(('api.urls', 'api'), namespace='api')),
+    path('admin/', admin.site.urls),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
 # from rest_framework.schemas import get_schema_view
 # from rest_framework.renderers import CoreJSONRenderer, JSONOpenAPIRenderer
-
-# from django.conf import settings
-# from django.conf.urls.static import static
-
-
-api_urlpatterns = [
-    path('api/', include(('api.urls', 'api'), namespace='api')),
-]
 # schema_view = get_schema_view(title='Lordtech Sales API',
 #                               description='API to manages sales at lordtech',
 #                               url='http://localhost:8000/',
@@ -35,9 +36,3 @@ api_urlpatterns = [
 #                               authentication_classes=[],
 #                               permission_classes=[],
 #                               patterns=api_urlpatterns,)
-
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    # path('doc/', schema_view, name="docs"),
-] + api_urlpatterns
