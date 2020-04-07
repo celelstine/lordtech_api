@@ -86,10 +86,10 @@ class ConfigurationViewSet(viewsets.ModelViewSet):
 
 class SalesRepViewSet(viewsets.ModelViewSet):
     """manage sales representatives"""
-    queryset = SalesRep.objects.filter(is_active=True).order_by('-create_date')
+    queryset = SalesRep.objects.order_by('-create_date')
     serializer_class = SalesRepSerializer
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('name', 'category',)
+    filter_fields = ('name', 'category', 'is_active')
 
     def create(self, request):
         """customize create method to validate object category"""
@@ -111,10 +111,10 @@ class SalesRepViewSet(viewsets.ModelViewSet):
 
 class ProductViewSet(viewsets.ModelViewSet):
     """manage product"""
-    queryset = Product.objects.filter(is_active=True).order_by('-create_date')
+    queryset = Product.objects.order_by('-create_date')
     serializer_class = ProductSerializer
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('name', 'category',)
+    filter_fields = ('name', 'category', 'is_active')
 
     def create(self, request):
         """customize create method to validate object category"""
@@ -808,8 +808,7 @@ class ProfitViewSet(viewsets.ReadOnlyModelViewSet):
 
 class TradeGroupViewSet(viewsets.ModelViewSet):
     """manage TradeGroup"""
-    queryset = TradeGroup.objects.filter(is_active=True).order_by(
-        '-create_date')
+    queryset = TradeGroup.objects.order_by('-create_date')
     serializer_class = TradeGroupSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('name', 'selling_currency', 'is_active')
