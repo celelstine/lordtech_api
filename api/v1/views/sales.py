@@ -690,7 +690,7 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         for trade in trades:
             total_cash_used += trade.amount_paid
 
-            sales_cost = trade.selling_rate * trade.total_amount
+            sales_cost = trade.selling_rate * trade.amount_paid
 
             group = trade.trade_group.name
             if group in groups:
@@ -700,7 +700,7 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
 
             card = trade.card.id
             sales_cost_naira = sales_cost * yuan_to_naira if trade.trade_group.selling_currency == TradeGroup.YUAN else sales_cost  # noqa
-            profit = sales_cost_naira - trade.total_amount_paid
+            profit = sales_cost_naira - trade.amount_paid
             if card in cards:
                 cards[card] += profit
             else:
