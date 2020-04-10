@@ -688,7 +688,7 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         total_cash_used = 0
 
         for trade in trades:
-            total_cash_used += trade.total_amount_paid
+            total_cash_used += trade.amount_paid
 
             sales_cost = trade.selling_rate * trade.total_amount
 
