@@ -667,7 +667,7 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         yuan_to_naira = 0
         # calculate profit
         try:
-            yuan_to_naira = int(Configuration.objects.get(
+            yuan_to_naira = float(Configuration.objects.get(
                 key='yuan_to_naira').value)
         except Configuration.DoesNotExist:
             return Response('Please add a value for config \'yuan_to_naira\'',
