@@ -732,7 +732,7 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
                 Profit.objects.create(amount=profit, product_id=card)
 
             # update group balance
-            group_objs = TradeGroup.filter(name__in=groups.keys())
+            group_objs = TradeGroup.objects.filter(name__in=groups.keys())
 
             for group in group_objs:
                 group.balance += groups[group.name]
