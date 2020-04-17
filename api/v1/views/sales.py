@@ -357,7 +357,7 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         for s in sales:
             if s.is_direct_sales is True:
                 total_direct_sales += s.cost
-            no_order_treated += sales.amount
+            no_order_treated += s.amount
             total_data_shared += s.total_mb
             income += s.cost
 
