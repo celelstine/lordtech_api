@@ -377,29 +377,34 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         total_airtime_used = 0
         total_mb_added = 0
 
+        if not sales_rep.sales.last():
+            return Response("Sales rep does not have a sales", status=status.HTTP_403_FORBIDDEN)
         product = sales_rep.sales.last().data_plan.network
 
         # get total airtime used for subscription and data gained
         # if total_sub > 0:
-        # the assumption is that a sales rep would hold only one product per shift  # noqa
+        # the assumption is that a sales rep would hold only one product per shift
         data_sub = product.datasubscription
         total_airtime_used = total_sub * data_sub.cost_per_sub
         total_mb_added = total_sub * data_sub.mb_per_sub
 
-        expected_airtime = start_airtime + total_airtime_received - total_airtime_used  # noqa
+        expected_airtime = start_airtime + total_airtime_received - total_airtime_used 
         outstanding = expected_airtime - actual_airtime + total_direct_sales
 
         expected_data_balance = start_data + total_mb_added - total_data_shared
         outstanding_data_balance = expected_data_balance - actual_data_balance - resend_data
 
-        deducting_plan = 0
+        deducting_plan = None
         outstanding_data_cash = 0
 
         if outstanding_data_balance > 0:
             if outstanding_data_balance > 500:
                 deducting_plan = product.dataplan_set.filter(
                     mb__gte=1000).order_by('mb').values('cost', 'mb').first()
-            else:
+
+            # at the point we have an outstanding that's less then  500 or we don't have a plan
+            # that's greater than or equal to 1000
+            if not deducting_plan:
                 deducting_plan = product.dataplan_set.order_by('mb').values(
                     'cost', 'mb').first()
 
@@ -414,10 +419,12 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
             if outstanding_data_balance < deducting_plan.get('mb'):
                 outstanding_data_balance = deducting_plan.get('mb')
 
+            # applied cross multiplication here
             outstanding_data_cash = (outstanding_data_balance * deducting_plan.get('cost')) / deducting_plan.get('mb')  # noqa
 
         outstanding += outstanding_data_cash
 
+        # applied cross multiplication here
         expenditure = (data_sub.cost_per_sub * total_data_shared) / data_sub.mb_per_sub   # noqa
 
         summary = {
