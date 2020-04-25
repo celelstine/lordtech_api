@@ -97,7 +97,7 @@ class AirtimeReceivedAdmin(admin.ModelAdmin):
 class DataSalesAdmin(admin.ModelAdmin):
     fields = (
         'id', 'data_plan', 'sales_rep', 'amount', 'cost', 'total_mb',
-        'is_direct_sales', 'is_closed', 'create_date', 'modify_date')
+        'is_direct_sales', 'resend', 'is_closed', 'create_date', 'modify_date')
     list_display = fields
     readonly_fields = ('id', 'create_date', 'modify_date', 'cost', 'total_mb')
     search_fields = ['id', 'amount', 'is_closed', 'cost']

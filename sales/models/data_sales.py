@@ -25,6 +25,8 @@ class DataSales(BaseAppModelMixin):
     total_mb = models.FloatField(null=False, blank=True)
     is_direct_sales = models.BooleanField(default=False)
     is_closed = models.BooleanField(default=False)
+    resend = models.BooleanField(default=False)
+
 
     def clean(self):
         # ensure that the data sub for recorded for only data sales reps

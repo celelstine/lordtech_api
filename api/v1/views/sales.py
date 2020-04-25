@@ -264,7 +264,7 @@ class DataSalesViewSet(viewsets.ModelViewSet):
     # serializer_class = DataSalesSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = (
-        'sales_rep', 'amount', 'create_date', 'is_closed', 'is_direct_sales',)
+        'sales_rep', 'amount', 'create_date', 'is_closed', 'is_direct_sales', 'resend')
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
