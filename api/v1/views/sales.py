@@ -323,8 +323,11 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         sales_rep_id = request.data.get('sales_rep', None)
         actual_airtime = request.data.get('actual_airtime', None)
         actual_data_balance = request.data.get('actual_data_balance', None)
-        # no_order_treated = request.data.get('no_order_treated', None)
-        sales_date = request.data.get('sales_date', now())
+        # get sales date
+        sales_date = request.data.get('sales_date', None)
+        sales_date =  datetime.strptime(sales_date, "%Y-%m-%d") if sales_date else now()
+        sales_date = sales_date.date()
+
         create = request.data.get('create', False)
 
         if sales_rep_id is None or actual_airtime is None or actual_data_balance is None:  # noqa
@@ -347,23 +350,29 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
 
         # calculate total airime received; that airtime Received that are not closed   # noqa
         total_airtime_received = sales_rep.airtime_received.filter(
-            is_closed=False).aggregate(Sum('amount'))['amount__sum'] or 0
+            is_closed=False,
+            create_date__date=sales_date).aggregate(Sum('amount'))['amount__sum'] or 0
 
-        sales = sales_rep.sales.filter(is_closed=False)
+        sales = sales_rep.sales.filter(is_closed=False, create_date__date=sales_date)
         total_direct_sales = 0
         total_data_shared = 0
         income = 0
         no_order_treated = 0
+        resend_data = 0
         for s in sales:
             if s.is_direct_sales is True:
                 total_direct_sales += s.cost
-            no_order_treated += s.amount
-            total_data_shared += s.total_mb
-            income += s.cost
+            if s.resend:
+                resend_data += s.total_mb
+            else:
+                no_order_treated += s.amount
+                total_data_shared += s.total_mb
+                income += s.cost
 
         # calculate total subscription made
         total_sub = sales_rep.subscriptions.filter(
-            is_closed=False).aggregate(Sum('amount'))['amount__sum'] or 0
+            is_closed=False,
+            create_date__date=sales_date).aggregate(Sum('amount'))['amount__sum'] or 0
 
         total_airtime_used = 0
         total_mb_added = 0
@@ -381,29 +390,32 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         outstanding = expected_airtime - actual_airtime + total_direct_sales
 
         expected_data_balance = start_data + total_mb_added - total_data_shared
-        outstanding_data_balance = actual_data_balance - expected_data_balance
+        outstanding_data_balance = expected_data_balance - actual_data_balance - resend_data
 
         deducting_plan = 0
+        outstanding_data_cash = 0
 
-        if outstanding_data_balance > 500:
-            deducting_plan = product.dataplan_set.filter(
-                mb__gte=1000).order_by('mb').values('cost', 'mb').first()
-        else:
-            deducting_plan = product.dataplan_set.order_by('mb').values(
-                'cost', 'mb').first()
+        if outstanding_data_balance > 0:
+            if outstanding_data_balance > 500:
+                deducting_plan = product.dataplan_set.filter(
+                    mb__gte=1000).order_by('mb').values('cost', 'mb').first()
+            else:
+                deducting_plan = product.dataplan_set.order_by('mb').values(
+                    'cost', 'mb').first()
 
-        if not deducting_plan:
-            return Response("Could not find a plan for %s"
-                            " to convert outstanding data $d "
-                            "to cash." % (product, outstanding_data_balance),
-                            status=status.HTTP_400_BAD_REQUEST)
+            if not deducting_plan:
+                return Response("Could not find a plan for %s"
+                                " to convert outstanding data $d "
+                                "to cash." % (product, outstanding_data_balance),
+                                status=status.HTTP_400_BAD_REQUEST)
 
-        # the system wants to upgrade the value to the lowest value
-        # so 750mb becomes 1gb
-        if outstanding_data_balance < deducting_plan.get('mb'):
-            outstanding_data_balance = deducting_plan.get('mb')
+            # the system wants to upgrade the value to the lowest value
+            # so 750mb becomes 1gb
+            if outstanding_data_balance < deducting_plan.get('mb'):
+                outstanding_data_balance = deducting_plan.get('mb')
 
-        outstanding_data_cash = (outstanding_data_balance * deducting_plan.get('cost')) / deducting_plan.get('mb')  # noqa
+            outstanding_data_cash = (outstanding_data_balance * deducting_plan.get('cost')) / deducting_plan.get('mb')  # noqa
+
         outstanding += outstanding_data_cash
 
         expenditure = (data_sub.cost_per_sub * total_data_shared) / data_sub.mb_per_sub   # noqa
@@ -423,7 +435,8 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
             'total_data_shared': total_data_shared,
             'no_order_treated': no_order_treated,
             'outstanding': outstanding,
-            'is_closed': True
+            'is_closed': True,
+            'resend_data': resend_data
         }
 
         if create is False:
@@ -435,9 +448,9 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
             sales_rep.airtime_balance = expected_airtime
             sales_rep.data_balance = expected_data_balance
             sales_rep.save()
-            sales_rep.airtime_received.filter(is_closed=False).update(is_closed=True)  # noqa
-            sales_rep.sales.filter(is_closed=False).update(is_closed=True)
-            sales_rep.subscriptions.filter(is_closed=False).update(is_closed=True)  # noqa
+            sales_rep.airtime_received.filter(create_date__date=sales_date).update(is_closed=True)
+            sales_rep.sales.filter( create_date__date=sales_date).update(is_closed=True)
+            sales_rep.subscriptions.filter(create_date__date=sales_date).update(is_closed=True)
             if sales.count != 0:
                 profit = income - expenditure
                 Profit.objects.create(amount=profit, product=product)
