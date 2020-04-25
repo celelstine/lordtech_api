@@ -71,7 +71,7 @@ class SalesRepDataSubscriptionAdmin(admin.ModelAdmin):
         'id', 'sub', 'sales_rep', 'amount', 'cost', 'is_closed',
         'create_date', 'modify_date')
     list_display = fields
-    readonly_fields = ('id', 'create_date', 'modify_date')
+    readonly_fields = ('id', 'create_date', 'modify_date', 'cost', 'is_closed')
     search_fields = ['id', 'is_closed']
 
     def get_queryset(self, request):
@@ -85,7 +85,7 @@ class AirtimeReceivedAdmin(admin.ModelAdmin):
         'id', 'sales_rep', 'amount', 'is_closed',
         'create_date', 'modify_date')
     list_display = fields
-    readonly_fields = ('id', 'create_date', 'modify_date')
+    readonly_fields = ('id', 'create_date', 'modify_date', 'is_closed')
     search_fields = ['id', 'amount', 'is_closed']
 
     def get_queryset(self, request):
@@ -99,7 +99,7 @@ class DataSalesAdmin(admin.ModelAdmin):
         'id', 'data_plan', 'sales_rep', 'amount', 'cost', 'total_mb',
         'is_direct_sales', 'resend', 'is_closed', 'create_date', 'modify_date')
     list_display = fields
-    readonly_fields = ('id', 'create_date', 'modify_date', 'cost', 'total_mb')
+    readonly_fields = ('id', 'create_date', 'modify_date', 'cost', 'total_mb', 'is_closed')
     search_fields = ['id', 'amount', 'is_closed', 'cost']
 
     def get_queryset(self, request):
@@ -131,7 +131,7 @@ class CashReceivedAdmin(admin.ModelAdmin):
         'id', 'sales_rep', 'amount', 'is_closed',
         'create_date', 'modify_date')
     list_display = fields
-    readonly_fields = ('id', 'create_date', 'modify_date')
+    readonly_fields = ('id', 'create_date', 'modify_date', 'is_closed')
     search_fields = ['id', 'amount', 'is_closed']
 
     def get_queryset(self, request):
@@ -145,7 +145,7 @@ class TradeAdmin(admin.ModelAdmin):
         'id', 'sales_rep', 'card', 'trade_group', 'selling_rate', 'buying_rate',
         'amount', 'amount_paid', 'is_closed', 'create_date', 'modify_date')
     list_display = fields
-    readonly_fields = ('id', 'create_date', 'modify_date')
+    readonly_fields = ('id', 'create_date', 'modify_date', 'is_closed')
     search_fields = ['id', 'amount', 'is_closed']
 
     def get_queryset(self, request):
@@ -159,7 +159,7 @@ class TradeSummaryAdmin(admin.ModelAdmin):
         'id', 'sales_rep', 'total_cash_received', 'total_cash_used',
         'balance',  'is_closed', 'create_date', 'modify_date')
     list_display = fields
-    readonly_fields = ('id', 'create_date', 'modify_date')
+    readonly_fields = ('id', 'create_date', 'modify_date', 'is_closed')
     search_fields = [
         'id', 'sales_rep', 'total_cash_received', 'total_cash_used',
          'balance', 'is_closed', 'create_date']
