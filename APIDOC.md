@@ -584,6 +584,7 @@ sales_rep: string  required (data sales rep  uuid)
 data_plan: string  required (data plan  uuid)
 amount: number required (quantity of the sub)
 is_direct_sales: boolean (default false)
+resend: boolean (default false)
 
 # auto generate fields
 cost: number
@@ -600,6 +601,7 @@ total_mb: number
             "cost": 2040,
             "total_mb": 10240000,
             "is_direct_sales": false,
+            "resend": false,
             "is_closed": true,
             "data_plan": {
                 "id": "e9d1f738-2f8a-44f8-b949-b255b6ee2ab2",
@@ -638,6 +640,7 @@ total_mb: number
             "cost": 2040,
             "total_mb": 10240000,
             "is_direct_sales": false,
+            "resend": false,
             "is_closed": true,
             "data_plan": {
                 "id": "e9d1f738-2f8a-44f8-b949-b255b6ee2ab2",
@@ -680,6 +683,7 @@ total_mb: number
         "cost": 400,
         "total_mb": 1024000,
         "is_direct_sales": false,
+        "resend": false,
         "is_closed": true,
         "data_plan": "8afc4887-651d-4c7c-888a-686246fcb4a1",
         "sales_rep": "d67ae125-0a09-4ef3-8e91-b18eb58aaf38"
@@ -742,6 +746,7 @@ total_mb: number
             "no_order_treated": 5,
             "outstanding": 29996,
             "is_closed": true,
+            "resend_data: 43033,
             "sales_rep": {
                 "id": "d67ae125-0a09-4ef3-8e91-b18eb58aaf38",
                 "create_date": "2019-12-01T15:15:20.017685Z",
