@@ -177,9 +177,14 @@ def is_closed_record(model, pk, action='update'):
 class SalesRepDataSubscriptionViewSet(viewsets.ModelViewSet):
     """manage sales rep DataSubscription"""
     queryset = SalesRepDataSubscription.objects.order_by('-create_date')
-    # serializer_class = SalesRepDataSubscriptionSerializer
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('sub', 'sales_rep', 'create_date', 'is_closed',)
+    filter_fields = {
+        'id': ['exact'],
+        'sales_rep': ['exact'],
+        'is_closed': ['exact'],
+        'amount': ['exact', 'gt', 'lt'],
+        'create_date': ['exact', 'date', 'date__lt', 'date__gt']
+    }
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -222,7 +227,13 @@ class AirtimeReceivedViewSet(viewsets.ModelViewSet):
     queryset = AirtimeReceived.objects.order_by('-create_date')
     serializer_class = AirtimeReceivedSerializer
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('sales_rep', 'amount', 'create_date', 'is_closed',)
+    filter_fields = {
+        'id': ['exact'],
+        'sales_rep': ['exact'],
+        'is_closed': ['exact'],
+        'amount': ['exact', 'gt', 'lt'],
+        'create_date': ['exact', 'date', 'date__lt', 'date__gt']
+    }
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -314,12 +325,20 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = DataSalesSummary.objects.order_by('-create_date')
     serializer_class = DataSalesSummarySerializer
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = (
-        'id', 'sales_rep', 'Start_airtime', 'sales_date',
-        'Start_data', 'total_airtime_received', 'total_direct_Sales',
-        'total_sub_made', 'expected_airtime', 'actual_airtime',
-        'expected_data_balance', 'no_order_treated', 'outstanding',
-        'is_closed',)
+    filter_fields = {
+        'id': ['exact'],
+        'sales_rep': ['exact'],
+        'is_closed': ['exact'],
+        'Start_airtime': ['exact'],
+        'Start_data': ['exact'],
+        'total_airtime_received': ['exact'],
+        'actual_airtime': ['exact'],
+        'expected_data_balance': ['exact'],
+        'no_order_treated': ['exact'],
+        'outstanding': ['exact'],
+        'sales_date': ['exact', 'date', 'date__lt', 'date__gt'],
+        'create_date': ['exact', 'date', 'date__lt', 'date__gt']
+    }
 
     @action(methods=['post'], detail=False)
     def close_shift(self, request, pk=None):
@@ -479,7 +498,13 @@ class CashReceivedViewSet(viewsets.ModelViewSet):
     queryset = CashReceived.objects.order_by('-create_date')
     # serializer_class = CashReceivedSerializer
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('sales_rep', 'amount', 'create_date', 'is_closed',)
+    filter_fields = {
+        'id': ['exact'],
+        'sales_rep': ['exact'],
+        'is_closed': ['exact'],
+        'amount': ['exact', 'gt', 'lt'],
+        'create_date': ['exact', 'date', 'date__lt', 'date__gt']
+    }
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -664,9 +689,16 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = TradeSummary.objects.order_by('-create_date')
     serializer_class = TradeSummarySerializer
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = (
-        'id', 'total_cash_received', 'is_closed', 'total_cash_used',
-        'sales_rep', 'balance',)
+    
+    filter_fields = {
+        'id': ['exact'],
+        'sales_rep': ['exact'],
+        'is_closed': ['exact'],
+        'total_cash_received': ['exact'],
+        'balance': ['exact'],
+        'total_cash_used': ['exact'],
+        'create_date': ['exact', 'date', 'date__lt', 'date__gt']
+    }
 
     @action(methods=['post'], detail=False)
     def close_shift(self, request, pk=None):
