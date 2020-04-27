@@ -263,8 +263,15 @@ class DataSalesViewSet(viewsets.ModelViewSet):
     queryset = DataSales.objects.order_by('-create_date')
     # serializer_class = DataSalesSerializer
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = (
-        'sales_rep', 'amount', 'create_date', 'is_closed', 'is_direct_sales', 'resend')
+    filter_fields = {
+        'id': ['exact'],
+        'sales_rep': ['exact'],
+        'is_closed': ['exact'],
+        'is_direct_sales': ['exact'],
+        'resend': ['exact'],
+        'amount': ['exact', 'lt', 'gt'],
+        'create_date': ['exact', 'date', 'date__lt', 'date__gt']
+    }
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
