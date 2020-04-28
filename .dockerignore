@@ -1,0 +1,8 @@
+venv/
+.vscode/
+.github/
+.env.sample
+.gitignore
+.flake8
+.travis.yml
+

@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  api:
+    build: 
+      context: .
+    # image: celestine24/lordtechAPI
+    ports:
+      - 8003:80
+    env_file:
+      - ./.env
+    environment: 
+      LAUNCH_TYPE: docker
+    volumes:
+      - ./:/home/docker/lordtech
+    depends_on: 
+      - db
+
+  db:
+    image: postgres
+    ports: 
+      - 5532:5432
+    volumes: 
+      - postgres-lordtechapi-vol/:/var/lib/postgresql/data
+    env_file:
+      - ./.env
+volumes: 
+  postgres-lordtechapi-vol:
+
