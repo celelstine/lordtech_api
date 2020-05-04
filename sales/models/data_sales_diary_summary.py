@@ -82,6 +82,11 @@ class DataSalesSummary(BaseAppModelMixin):
         blank=False
     )
     is_closed = models.BooleanField(default=False)
+    resend_data = models.FloatField(
+        default=0.0,
+        null=True,
+        blank=True
+    )
 
     def clean(self):
         # ensure that the data sub for recorded for only data sales reps
