@@ -9,7 +9,7 @@ from .salesrep import SalesRep
 
 class DataSalesSummary(BaseAppModelMixin):
     """class for data sales summary"""
-    sales_date = models.DateTimeField(
+    sales_date = models.DateField(
         null=False,
         blank=False,
         default=now
