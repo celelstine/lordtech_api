@@ -129,13 +129,17 @@ class TradeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Trade
-        fields = '__all__'
-
+        fields = (
+            'id', 'sales_rep', 'trade_group', 'card', 'selling_rate',
+            'buying_rate', 'amount', 'amount_paid', 'order_id',
+            'is_closed', 'is_valid', 'create_date', 'modify_date'
+        )
 
 class TradeGetSerializer(TradeSerializer):
 
     class Meta(TradeSerializer.Meta):
         depth = 1
+        
 
 
 class TradeSummarySerializer(serializers.ModelSerializer):

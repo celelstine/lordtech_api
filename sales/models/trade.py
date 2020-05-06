@@ -27,9 +27,9 @@ class Trade(BaseAppModelMixin):
         limit_choices_to={'category': Product.GIFTCARD},
         related_name='trades')
     selling_rate = models.PositiveIntegerField('Selling rate (Yuan)',
-                                               blank=False, null=False)
+                                               blank=True, null=True)
     buying_rate = models.FloatField('Buying rate (Naira)',
-                                    blank=False, null=False)
+                                    blank=True, null=True)
     amount = models.PositiveIntegerField(null=False, blank=False)
     amount_paid = models.FloatField(null=True, blank=True)
     order_id = models.CharField(
@@ -53,12 +53,19 @@ class Trade(BaseAppModelMixin):
                 pk=self.pk)
             if obj['is_closed'] is True:
                 raise ValidationError('Can update a closed record')
+    
+    @property
+    def is_valid(self):
+        # we are only checking for nullable fields that are required
+        return True if self.selling_rate and self.buying_rate and self.trade_group else False
+
 
     def save(self, *args, **kwargs):
         # ensure that the clean method is call on every save
         self.clean()
         # auto calculate amount_paid
-        self.amount_paid = self.amount * self.buying_rate
+        if self.buying_rate:
+            self.amount_paid = self.amount * self.buying_rate
         super(Trade, self).save(*args, **kwargs)
 
     def __str__(self):

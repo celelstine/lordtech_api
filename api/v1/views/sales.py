@@ -747,15 +747,21 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         total_cash_used = 0
 
         for trade in trades:
+            if not trade.is_valid:
+                print('trade', trade.__dict__)
+                return Response('Can not close shift, some trades are invalid',
+                                status=status.HTTP_403_FORBIDDEN)
+
             total_cash_used += trade.amount_paid
 
-            sales_cost = trade.selling_rate * trade.amount_paid
-
-            group = trade.trade_group.name
-            if group in groups:
-                groups[group] += sales_cost
-            else:
-                groups[group] = sales_cost
+            sales_cost = trade.selling_rate * trade.amount
+            
+            if trade.trade_group:
+                group = trade.trade_group.name
+                if group in groups:
+                    groups[group] += sales_cost
+                else:
+                    groups[group] = sales_cost
 
             card = trade.card.id
             sales_cost_naira = sales_cost * yuan_to_naira if trade.trade_group.selling_currency == TradeGroup.YUAN else sales_cost  # noqa
@@ -872,6 +878,16 @@ class TradeGroupViewSet(viewsets.ModelViewSet):
     serializer_class = TradeGroupSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('name', 'selling_currency', 'is_active')
+
+    def destroy(self, request, pk=None):
+        obj = TradeGroup.objects.filter(pk=pk).first()
+        if not obj:
+            return Response('Unknown Group', status=status.HTTP_404_NOT_FOUND)
+
+        obj.is_active = False
+        obj.save()
+
+        return Response(status=status.HTTP_200_OK)
 
     @action(methods=['post'], detail=True)
     def withdraw(self, request, pk=None):

@@ -188,7 +188,7 @@ class TradeGroupAdmin(admin.ModelAdmin):
         'id', 'name', 'balance', 'selling_currency', 'create_date',
         'is_active', 'modify_date', )
     list_display = fields
-    readonly_fields = fields
+    readonly_fields = ('id', 'modify_date', 'create_date')
     search_fields = ['id', 'name', 'selling_currency']
 
     def get_queryset(self, request):
