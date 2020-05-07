@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.timezone import now
 from django.core.exceptions import ValidationError
 
 from utils.model_mixins import BaseAppModelMixin
@@ -9,6 +10,11 @@ from .salesrep import SalesRep
 class TradeSummary(BaseAppModelMixin):
     """class for summary of giftcard trade by sales rep"""
 
+    sales_date = models.DateField(
+        null=False,
+        blank=False,
+        default=now
+    )
     sales_rep = models.ForeignKey(
         SalesRep,
         on_delete=models.CASCADE,

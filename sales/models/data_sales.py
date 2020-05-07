@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.timezone import now
 from django.core.exceptions import ValidationError
 
 from utils.model_mixins import BaseAppModelMixin
@@ -10,6 +11,11 @@ from .salesrep import SalesRep
 class DataSales(BaseAppModelMixin):
     """class for data sales"""
 
+    sales_date = models.DateField(
+        null=False,
+        blank=False,
+        default=now
+    )
     data_plan = models.ForeignKey(
         DataPlan,
         on_delete=models.CASCADE,

@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.timezone import now
 from django.core.exceptions import ValidationError
 
 from utils.model_mixins import BaseAppModelMixin
@@ -12,6 +13,11 @@ from sales.models import (
 class SalesRepDataSubscription(BaseAppModelMixin):
     """class for data plan"""
 
+    date = models.DateField(
+        null=False,
+        blank=False,
+        default=now
+    )
     sub = models.ForeignKey(DataSubscription, on_delete=models.CASCADE)
     sales_rep = models.ForeignKey(
         SalesRep,

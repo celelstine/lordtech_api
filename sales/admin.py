@@ -69,7 +69,7 @@ class DataPlanAdmin(admin.ModelAdmin):
 class SalesRepDataSubscriptionAdmin(admin.ModelAdmin):
     fields = (
         'id', 'sub', 'sales_rep', 'amount', 'cost', 'is_closed',
-        'create_date', 'modify_date')
+        'create_date', 'modify_date', 'date')
     list_display = fields
     readonly_fields = ('id', 'create_date', 'modify_date', 'cost', 'is_closed')
     search_fields = ['id', 'is_closed']
@@ -83,7 +83,7 @@ class SalesRepDataSubscriptionAdmin(admin.ModelAdmin):
 class AirtimeReceivedAdmin(admin.ModelAdmin):
     fields = (
         'id', 'sales_rep', 'amount', 'is_closed',
-        'create_date', 'modify_date')
+        'create_date', 'modify_date', 'date')
     list_display = fields
     readonly_fields = ('id', 'create_date', 'modify_date', 'is_closed')
     search_fields = ['id', 'amount', 'is_closed']
@@ -97,7 +97,7 @@ class AirtimeReceivedAdmin(admin.ModelAdmin):
 class DataSalesAdmin(admin.ModelAdmin):
     fields = (
         'id', 'data_plan', 'sales_rep', 'amount', 'cost', 'total_mb',
-        'is_direct_sales', 'resend', 'is_closed', 'create_date', 'modify_date')
+        'is_direct_sales', 'resend', 'is_closed', 'create_date', 'modify_date', 'sales_date')
     list_display = fields
     readonly_fields = ('id', 'create_date', 'modify_date', 'cost', 'total_mb', 'is_closed')
     search_fields = ['id', 'amount', 'is_closed', 'cost']
@@ -129,7 +129,7 @@ class DataSalesSummaryAdmin(admin.ModelAdmin):
 class CashReceivedAdmin(admin.ModelAdmin):
     fields = (
         'id', 'sales_rep', 'amount', 'is_closed',
-        'create_date', 'modify_date')
+        'create_date', 'modify_date', 'date')
     list_display = fields
     readonly_fields = ('id', 'create_date', 'modify_date', 'is_closed')
     search_fields = ['id', 'amount', 'is_closed']
@@ -143,7 +143,7 @@ class CashReceivedAdmin(admin.ModelAdmin):
 class TradeAdmin(admin.ModelAdmin):
     fields = (
         'id', 'sales_rep', 'card', 'trade_group', 'selling_rate', 'buying_rate',
-        'amount', 'amount_paid', 'is_closed', 'create_date', 'modify_date')
+        'amount', 'amount_paid', 'is_closed', 'create_date', 'modify_date', 'sales_date')
     list_display = fields
     readonly_fields = ('id', 'create_date', 'modify_date', 'is_closed')
     search_fields = ['id', 'amount', 'is_closed']
@@ -157,7 +157,7 @@ class TradeAdmin(admin.ModelAdmin):
 class TradeSummaryAdmin(admin.ModelAdmin):
     fields = (
         'id', 'sales_rep', 'total_cash_received', 'total_cash_used',
-        'balance',  'is_closed', 'create_date', 'modify_date')
+        'balance',  'is_closed', 'create_date', 'modify_date', 'sales_date')
     list_display = fields
     readonly_fields = ('id', 'create_date', 'modify_date', 'is_closed')
     search_fields = [

@@ -15,5 +15,6 @@ class TradeFilter(django_filters.FilterSet):
             'order_id': ['exact'],
             'trade_group': ['exact'],
             'amount': ['exact', 'lt', 'gt'],
+            'sales_date': ['exact', 'lt', 'gt'],
             'create_date': ['exact', 'date', 'date__lte', 'date__gte']
         }

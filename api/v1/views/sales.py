@@ -183,6 +183,7 @@ class SalesRepDataSubscriptionViewSet(viewsets.ModelViewSet):
         'sales_rep': ['exact'],
         'is_closed': ['exact'],
         'amount': ['exact', 'gt', 'lt'],
+        'date': ['exact', 'lt', 'gt'],
         'create_date': ['exact', 'date', 'date__lt', 'date__gt']
     }
 
@@ -232,6 +233,7 @@ class AirtimeReceivedViewSet(viewsets.ModelViewSet):
         'sales_rep': ['exact'],
         'is_closed': ['exact'],
         'amount': ['exact', 'gt', 'lt'],
+        'date': ['exact', 'lt', 'gt'],
         'create_date': ['exact', 'date', 'date__lt', 'date__gt']
     }
 
@@ -281,6 +283,7 @@ class DataSalesViewSet(viewsets.ModelViewSet):
         'is_direct_sales': ['exact'],
         'resend': ['exact'],
         'amount': ['exact', 'lt', 'gt'],
+        'sales_date': ['exact', 'lt', 'gt'],
         'create_date': ['exact', 'date', 'date__lt', 'date__gt']
     }
 
@@ -336,7 +339,7 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         'expected_data_balance': ['exact'],
         'no_order_treated': ['exact'],
         'outstanding': ['exact'],
-        'sales_date': ['exact', 'date', 'date__lt', 'date__gt'],
+        'sales_date': ['exact', 'lt', 'gt'],
         'create_date': ['exact', 'date', 'date__lt', 'date__gt']
     }
 
@@ -377,9 +380,9 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         # calculate total airime received; that airtime Received that are not closed   # noqa
         total_airtime_received = sales_rep.airtime_received.filter(
             is_closed=False,
-            create_date__date=sales_date).aggregate(Sum('amount'))['amount__sum'] or 0
+            date=sales_date).aggregate(Sum('amount'))['amount__sum'] or 0
 
-        sales = sales_rep.sales.filter(is_closed=False, create_date__date=sales_date)
+        sales = sales_rep.sales.filter(is_closed=False, sales_date=sales_date)
         total_direct_sales = 0
         total_data_shared = 0
         income = 0
@@ -398,7 +401,7 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         # calculate total subscription made
         total_sub = sales_rep.subscriptions.filter(
             is_closed=False,
-            create_date__date=sales_date).aggregate(Sum('amount'))['amount__sum'] or 0
+            date=sales_date).aggregate(Sum('amount'))['amount__sum'] or 0
 
         total_airtime_used = 0
         total_mb_added = 0
@@ -478,15 +481,16 @@ class DataSalesSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         # close shift records
         with transaction.atomic():
             # close records
-            sales_rep.airtime_balance = expected_airtime
-            sales_rep.data_balance = expected_data_balance
+            sales_rep.airtime_balance = actual_airtime
+            sales_rep.data_balance = actual_data_balance
+            sales_rep.outstanding += outstanding
             sales_rep.save()
-            sales_rep.airtime_received.filter(create_date__date=sales_date).update(is_closed=True)
-            sales_rep.sales.filter( create_date__date=sales_date).update(is_closed=True)
-            sales_rep.subscriptions.filter(create_date__date=sales_date).update(is_closed=True)
+            sales_rep.airtime_received.filter(date=sales_date).update(is_closed=True)
+            sales_rep.sales.filter( sales_date=sales_date).update(is_closed=True)
+            sales_rep.subscriptions.filter(date=sales_date).update(is_closed=True)
             if sales.count != 0:
                 profit = income - expenditure
-                Profit.objects.create(amount=profit, product=product)
+                Profit.objects.create(amount=profit, product=product, sales_date=sales_date)
             sales_summary = DataSalesSummary.objects.create(**summary)
 
             data = self.get_serializer_class()(sales_summary).data
@@ -503,6 +507,7 @@ class CashReceivedViewSet(viewsets.ModelViewSet):
         'sales_rep': ['exact'],
         'is_closed': ['exact'],
         'amount': ['exact', 'gt', 'lt'],
+        'date': ['exact', 'lt', 'gt'],
         'create_date': ['exact', 'date', 'date__lt', 'date__gt']
     }
 
@@ -668,6 +673,7 @@ class TradeViewSet(viewsets.ModelViewSet):
                 obj.buying_rate = trade['buying_rate']
                 obj.amount = trade['amount']
                 obj.order_id = trade['order_id']
+                obj.sales_date = trade['sales_date']
                 obj.save()
         except IntegrityError:
             return Response("Invalid data, duplicate values for unique fields"
@@ -697,6 +703,7 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
         'total_cash_received': ['exact'],
         'balance': ['exact'],
         'total_cash_used': ['exact'],
+        'sales_date': ['exact', 'lt', 'gt'],
         'create_date': ['exact', 'date', 'date__lt', 'date__gt']
     }
 
@@ -748,7 +755,6 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
 
         for trade in trades:
             if not trade.is_valid:
-                print('trade', trade.__dict__)
                 return Response('Can not close shift, some trades are invalid',
                                 status=status.HTTP_403_FORBIDDEN)
 
@@ -778,7 +784,8 @@ class TradeSummaryViewSet(viewsets.ReadOnlyModelViewSet):
             'total_cash_received': total_cash_received,
             'total_cash_used': total_cash_used,
             'balance': balance,
-            'is_closed': True
+            'is_closed': True,
+            'sales_date': now().date(),
         }
 
         if create is False:

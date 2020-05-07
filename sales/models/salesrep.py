@@ -25,6 +25,7 @@ class SalesRep(BaseAppModelMixin):
     cash_balance = models.FloatField(default=0)
     airtime_balance = models.FloatField(default=0)
     data_balance = models.FloatField(default=0)
+    outstanding = models.FloatField(default=0)
 
     class Meta:
         verbose_name = 'Sales Rep'

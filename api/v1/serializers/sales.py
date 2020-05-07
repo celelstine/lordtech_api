@@ -132,7 +132,7 @@ class TradeSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'sales_rep', 'trade_group', 'card', 'selling_rate',
             'buying_rate', 'amount', 'amount_paid', 'order_id',
-            'is_closed', 'is_valid', 'create_date', 'modify_date'
+            'is_closed', 'is_valid', 'create_date', 'modify_date', 'sales_date'
         )
 
 class TradeGetSerializer(TradeSerializer):
